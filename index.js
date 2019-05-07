@@ -7,6 +7,7 @@ const client = new discord.Client();
 
 client.on('ready', () => {
     console.log('Tecton bot on and connected');
+    client.user.setActivity('&help cordless.tecton.tech', { type: 'PLAYING' })
     try {
         client.channels.get(testChannel).send('Bot Operational');
     } catch {
