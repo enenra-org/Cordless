@@ -7,7 +7,11 @@ const client = new discord.Client();
 
 client.on('ready', () => {
     console.log('Tecton bot on and connected');
-    client.channels.get(testChannel).send('Bot Operational');
+    try {
+        client.channels.get(testChannel).send('Bot Operational');
+    } catch {
+        console.log("This is not debug mode..... yeet");
+    }
 });
 
 client.on('message', (msg) => {
@@ -20,8 +24,44 @@ client.on('message', (msg) => {
     commands.runCommand(command, args, msg.channel, client, msg);
 });
 client.on('guildMemberAdd', member => {
-    data = SMD.readServerData()
-    member.guild.channels.get(testChannel).send("Welcome, " + member.nickname);
+    data = SDM.readServerData(member.guild.id);
+    if (data.welcomeMessages.welcomeMessageEnabled === true) {
+        if ((member.guild.memberCount % 10) == 1) {
+            pref = "st";
+        } else if ((member.guild.memberCount % 10) == 2) {
+            pref = "nd";
+        } else if ((member.guild.memberCount % 10) == 3) {
+            pref = "rd";
+        } else {
+            pref = "th";
+        }
+        message = data.welcomeMessages.mess
+        message = message.replace("$name",member.displayName);
+        message = message.replace("$count",member.guild.memberCount + pref);
+            member.guild.channels.get(data.welcomeMessages.welcomeChannelID).send(message);
+    }else {
+        return;
+    }
+});
+client.on('guildMemberRemove', member => {
+    data = SDM.readServerData(member.guild.id);
+    if (data.leaveMessages.leaveMessageEnabled ===true) {
+        if ((member.guild.memberCount % 10) == 1) {
+            pref = "st";
+        } else if ((member.guild.memberCount % 10) == 2) {
+            pref = "nd";
+        } else if ((member.guild.memberCount % 10) == 3) {
+            pref = "rd";
+        } else {
+            pref = "th";
+        }
+        message = data.leaveMessages.mess
+        message = message.replace("$name",member.displayName);
+        message = message.replace("$count",member.guild.memberCount + pref);
+            member.guild.channels.get(data.leaveMessages.leaveChannelID).send(message);
+    }else {
+        return;
+    }
 });
 
 client.login(privateConfig.token);

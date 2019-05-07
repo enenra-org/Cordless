@@ -16,7 +16,7 @@ commandsTable = {}; // Commands hash table
 function help(client, channel, args) {
     const embed = new Discord.RichEmbed();
     embed.setColor(2012);
-    embed.setTitle("Discord Bot");
+    embed.setTitle("Cordless Bot");
     for (var info in helpInformation) {
         embed.addField(info, helpInformation[info]);
     }
@@ -88,16 +88,73 @@ function mute(client, channel, args, msg) {
 }
 //add welcome channel
 function welcomeSetup(client, channel, args) {
-    if (channel.guild.channels.get(args[0]) = null) {
-        channel.send("Please put in a valid channel ID");
+    if (isNaN(args[0])) {
+        channel.send("Please input a channel ID for the welcome.");
         return;
     }
+
     data = SDM.readServerData(channel.guild.id);
     data.welcomeMessages.welcomeMessageEnabled = true;
     data.welcomeMessages.welcomeChannelID = args[0];
     SDM.saveServerData(channel.guild.id, data);
     channel.send("Channel ID Set for welcome message");
 };
+function welcomeMessage(client, channel, args) {
+    data = SDM.readServerData(channel.guild.id);
+    if (data.welcomeMessages.welcomeMessageEnabled = false) {
+        channel.send("You need to enter &welcome-setup first!!!");
+    }
+    message =  "";
+    x=0;
+    while (x < args.length) {
+        message += args[x]+" ";
+        x++;
+    }
+    data.welcomeMessages.mess = message;
+    SDM.saveServerData(channel.guild.id, data);
+    console.log(message);
+    channel.send("Channel thingy Set for welcome message");
+};
+function delWelcome(client,channel,args) {
+    data = SDM.readServerData(channel.guild.id);
+    data.welcomeMessages.welcomeMessageEnabled = false;
+    SDM.saveServerData(channel.guild.id, data);
+    channel.send("Stopped welcomes!")
+}
+function leaveSetup(client, channel, args) {
+    if (isNaN(args[0])) {
+        channel.send("Please input a channel ID for the leave");
+        return;
+    }
+
+    data = SDM.readServerData(channel.guild.id);
+    data.leaveMessages.leaveMessageEnabled = true;
+    data.leaveMessages.leaveChannelID = args[0];
+    SDM.saveServerData(channel.guild.id, data);
+    channel.send("Channel ID Set for leave message");
+};
+function leaveMessage(client, channel, args) {
+    data = SDM.readServerData(channel.guild.id);
+    if (data.leaveMessages.leaveMessageEnabled = false) {
+        channel.send("You need to enter &leave-setup first!!!");
+    }
+    message =  "";
+    x=0;
+    while (x < args.length) {
+        message += args[x]+" ";
+        x++;
+    }
+    data.leaveMessages.mess = message;
+    SDM.saveServerData(channel.guild.id, data);
+    console.log(message);
+    channel.send("Channel thingy Set for leave message");
+};
+function delLeave(client,channel,args) {
+    data = SDM.readServerData(channel.guild.id);
+    data.leaveMessages.leaveMessageEnabled = false;
+    SDM.saveServerData(channel.guild.id, data);
+    channel.send("Stopped leaves!")
+}
 exports.runCommand = function runCommand(command, args, channel, client, msg) {
     if (commandsTable.hasOwnProperty(command)) {
         commandsTable[command](client, channel, args, msg);
@@ -110,7 +167,12 @@ helpInformation["ping"] = "Get the discord bot's ping to your server.";
 helpInformation["embed"] = "Make discord embeds";
 helpInformation["argprint"] = "Prints arguments, mostly for debugging";
 helpInformation["mute"] = "Mutes a user(must have roles below the bots)";
-helpInformation["welcome-setup"] = "Welcomes user";
+helpInformation["welcome-setup"] = "Sets user welcome channel ID";
+helpInformation["welcome-message"] = "Sets Welcome Message with $name as name and $count as member count";
+helpInformation["welcome-stop"] = "Stops the welcome messages. Turn back on with setup!"
+helpInformation["leave-setup"] = "Sets user leave channel ID";
+helpInformation["leave-message"] = "Sets leave Message with $name as name and $count as member count";
+helpInformation["leave-stop"] = "Stops the leave messages. Turn back on with setup!"
 
 commandsTable["mute"] = mute;
 commandsTable["embed"] = makeEmbed;
@@ -118,3 +180,8 @@ commandsTable["argprint"] = argPrint;
 commandsTable["help"] = help;
 commandsTable["ping"] = ping;
 commandsTable["welcome-setup"] = welcomeSetup;
+commandsTable["welcome-message"] = welcomeMessage;
+commandsTable["welcome-stop"] = delWelcome;
+commandsTable["leave-setup"] = leaveSetup;
+commandsTable["leave-message"] = leaveMessage;
+commandsTable["leave-stop"] = delLeave;

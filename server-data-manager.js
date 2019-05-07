@@ -7,6 +7,12 @@ exports.readServerData = function (guildID) {
             "welcomeMessages": {
                 "welcomeChannelID": "",
                 "welcomeMessageEnabled": false,
+                "mess" : ""
+            },
+            "leaveMessages": {
+                "leaveChannelID": "",
+                "leaveMessageEnabled": false,
+                "mess" : ""
             },
             "mute": {
                 "roleID": ""
