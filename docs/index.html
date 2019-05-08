@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Cordless</title>
     <link rel="stylesheet" href="css/style.css">
+    <script src="particles.js"></script>
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
 </head>
 
@@ -50,13 +51,14 @@
             </div>
         </div>
     </nav>
-    <div class="hero is-link">
+    <div id="particle-js" class="hero is-link">
         <div class="hero-body">
             <div class="container has-text-centered">
                 <div class="columns is-vcentered">
                     <div class="column is-5">
                         <figure class="image is-3by5">
-                            <img src="https://images.homedepot-static.com/productImages/ab3f0269-d3d0-4122-8f11-6165170db4ab/svn/orange-ge-general-purpose-cords-51927-64_1000.jpg" alt="Logo">
+                            <img src="https://images.homedepot-static.com/productImages/ab3f0269-d3d0-4122-8f11-6165170db4ab/svn/orange-ge-general-purpose-cords-51927-64_1000.jpg"
+                                alt="Logo">
                         </figure>
                     </div>
                     <div class="column is-6 is-offset-1">
@@ -188,14 +190,17 @@
         </div>
     </section>
     <script>
-    (function () {
-        var burger = document.querySelector('#nav-toggle');
-        var menu = document.querySelector('.navbar-menu');
-        burger.addEventListener('click', function () {
-            burger.classList.toggle('is-active');
-            menu.classList.toggle('is-active');
+        particlesJS.load('particle-js', 'particles.json', function () {
+            console.log('LOADED PARTICLES');
         });
-    })();
+        (function () {
+            var burger = document.querySelector('#nav-toggle');
+            var menu = document.querySelector('.navbar-menu');
+            burger.addEventListener('click', function () {
+                burger.classList.toggle('is-active');
+                menu.classList.toggle('is-active');
+            });
+        })();
     </script>
 </body>
 
