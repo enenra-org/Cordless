@@ -17,7 +17,7 @@
                     width="112" height="28">
             </a>
 
-            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false"
+            <a id="nav-toggle" role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false"
                 data-target="navbarBasicExample">
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
@@ -27,7 +27,7 @@
 
         <div id="navbarBasicExample" class="navbar-menu">
             <div class="navbar-start">
-                <a class="navbar-item">
+                <a class="navbar-item is-active">
                     Home
                 </a>
 
@@ -187,6 +187,16 @@
             </div>
         </div>
     </section>
+    <script>
+    (function () {
+        var burger = document.querySelector('#nav-toggle');
+        var menu = document.querySelector('.navbar-menu');
+        burger.addEventListener('click', function () {
+            burger.classList.toggle('is-active');
+            menu.classList.toggle('is-active');
+        });
+    })();
+    </script>
 </body>
 
 </html>
