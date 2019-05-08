@@ -4,7 +4,6 @@ const commands = require("./commands");
 const SDM = require('./server-data-manager');
 const testChannel = "575022379756027904";
 const client = new discord.Client();
-
 client.on('ready', () => {
     console.log('Tecton bot on and connected');
     client.user.setActivity('&help cordless.tecton.tech', { type: 'PLAYING' })
