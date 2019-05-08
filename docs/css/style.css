@@ -6913,5 +6913,9 @@ h6 {
 .notification.is-danger a:not(.button) {
   color: #fff;
   text-decoration: underline; }
-
+#particle-js canvas{
+  position: absolute;
+  height: 100vh;
+	z-index: 0;
+}
 /*# sourceMappingURL=bulmaswatch.min.css.map */
