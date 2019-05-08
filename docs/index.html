@@ -1,9 +1,192 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Cordless</title>
-    </head>
-    <body>
-        <p>Cordless Documentation</p>
-    </body>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cordless</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+</head>
+
+<body>
+    <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="https://bulma.io">
+                <img src="data:image/png;base64,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"
+                    width="112" height="28">
+            </a>
+
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false"
+                data-target="navbarBasicExample">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+
+        <div id="navbarBasicExample" class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item">
+                    Home
+                </a>
+
+                <a class="navbar-item">
+                    Documentation
+                </a>
+                <a class="navbar-item">
+                    Team
+                </a>
+            </div>
+
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <a class="button is-inverted is-outlined is-dark">
+                            <strong>Join the Discord!</strong>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="hero is-link">
+        <div class="hero-body">
+            <div class="container has-text-centered">
+                <div class="columns is-vcentered">
+                    <div class="column is-5">
+                        <figure class="image is-3by5">
+                            <img src="http://www.electri-cord.com/images/power-cord-lrg.png" alt="Logo">
+                        </figure>
+                    </div>
+                    <div class="column is-6 is-offset-1">
+                        <h1 class="title is-2">
+                            Cordless
+                        </h1>
+                        <h2 class="subtitle is-4">
+                            The Discord Bot for all your needs
+                        </h2>
+                        <br>
+                        <p class="has-text-centered">
+                            <a class="button is-medium is-info is-inverted">
+                                Learn more
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="hero">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">Functions</h1>
+                <h1 class="subtitle">All the functions that Cordless can do.</h1>
+                <div class="columns is-multiline">
+                    <div class="column is-4">
+                        <div class="box has-text-centered">
+                            <div class="column-body has-text-centered">
+                                <h1 class="title is-4">Example Feature</h1>
+                                <img class="image is-inline is-96x96"
+                                    src="https://img.icons8.com/material/4ac144/256/user-male.png">
+                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit atque voluptate
+                                    voluptatibus perspiciatis non odit facilis vero sint quasi sunt repellendus, beatae
+                                    labore illo unde nisi adipisci commodi? Debitis, adipisci?</p>
+                            </div>
+                            <br>
+                            <div class="column-foot is-inline-block">
+                                <div class="tabs is-toggle is-toggle-rounded is-small is-inline">
+                                    <ul>
+                                        <li><a>Documentation</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-4">
+                        <div class="box has-text-centered">
+                            <div class="column-body has-text-centered">
+                                <h1 class="title is-4">Example Feature</h1>
+                                <img class="image is-inline is-96x96"
+                                    src="https://img.icons8.com/material/4ac144/256/user-male.png">
+                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit atque voluptate
+                                    voluptatibus perspiciatis non odit facilis vero sint quasi sunt repellendus, beatae
+                                    labore illo unde nisi adipisci commodi? Debitis, adipisci?</p>
+                            </div>
+                            <br>
+                            <div class="column-foot is-inline-block">
+                                <div class="tabs is-toggle is-toggle-rounded is-small is-inline">
+                                    <ul>
+                                        <li><a>Documentation</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-4">
+                        <div class="box has-text-centered">
+                            <div class="column-body has-text-centered">
+                                <h1 class="title is-4">Example Feature</h1>
+                                <img class="image is-inline is-96x96"
+                                    src="https://img.icons8.com/material/4ac144/256/user-male.png">
+                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit atque voluptate
+                                    voluptatibus perspiciatis non odit facilis vero sint quasi sunt repellendus, beatae
+                                    labore illo unde nisi adipisci commodi? Debitis, adipisci?</p>
+                            </div>
+                            <br>
+                            <div class="column-foot is-inline-block">
+                                <div class="tabs is-toggle is-toggle-rounded is-small is-inline">
+                                    <ul>
+                                        <li><a>Documentation</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-4">
+                        <div class="box has-text-centered">
+                            <div class="column-body has-text-centered">
+                                <h1 class="title is-4">Example Feature</h1>
+                                <img class="image is-inline is-96x96"
+                                    src="https://img.icons8.com/material/4ac144/256/user-male.png">
+                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit atque voluptate
+                                    voluptatibus perspiciatis non odit facilis vero sint quasi sunt repellendus, beatae
+                                    labore illo unde nisi adipisci commodi? Debitis, adipisci?</p>
+                            </div>
+                            <br>
+                            <div class="column-foot is-inline-block">
+                                <div class="tabs is-toggle is-toggle-rounded is-small is-inline">
+                                    <ul>
+                                        <li><a>Documentation</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-4">
+                        <div class="box has-text-centered">
+                            <div class="column-body has-text-centered">
+                                <h1 class="title is-4">Example Feature</h1>
+                                <img class="image is-inline is-96x96"
+                                    src="https://img.icons8.com/material/4ac144/256/user-male.png">
+                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit atque voluptate
+                                    voluptatibus perspiciatis non odit facilis vero sint quasi sunt repellendus, beatae
+                                    labore illo unde nisi adipisci commodi? Debitis, adipisci?</p>
+                            </div>
+                            <br>
+                            <div class="column-foot is-inline-block">
+                                <div class="tabs is-toggle is-toggle-rounded is-small is-inline">
+                                    <ul>
+                                        <li><a>Documentation</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
 </html>
