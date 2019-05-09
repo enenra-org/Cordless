@@ -8,6 +8,8 @@
         
     }
 */
+let Parser = require('rss-parser');
+let parser = new Parser();
 const Discord = require('discord.js');
 const SDM = require('./server-data-manager');
 commandsTable = {}; // Commands hash table
@@ -37,6 +39,16 @@ function ping(client, channel, args) {
         "description": "🏓Pong! " + client.ping + " ms🏓"
     };
     channel.send({ embed });
+}
+function fml(client,channel,args) {
+    (async () => {
+        array = []
+        let feed = await parser.parseURL('https://www.fmylife.com/rss');
+        feed.items.forEach(item => {
+            array.push(item.content);
+          });
+        channel.send(array[rand(0,array.length)]);
+      })();
 }
 function makeEmbed(client, channel, args) {
     if (isNaN(args[0])) {
@@ -196,6 +208,9 @@ helpInformation["leave-message"] = "Sets leave Message with $name as name and $c
 helpInformation["leave-stop"] = "Stops the leave messages. Turn back on with setup!";
 helpInformation["clear"] = "clear a number of messages with this command!";
 helpInformation["prof"] = "toggles profanity filter!";
+helpInformation["startflow"] = "Starts a flow of memes in a channel!"
+helpInformation["stopflow"] = "Stops a flow of memes in a channel!"
+helpInformation["fml"] = "Gives a random fml"
 
 commandsTable["mute"] = mute;
 commandsTable["embed"] = makeEmbed;
@@ -210,3 +225,9 @@ commandsTable["leave-message"] = leaveMessage;
 commandsTable["leave-stop"] = delLeave;
 commandsTable["clear"] = msgdel;
 commandsTable["prof"] = prof;
+commandsTable["fml"] = fml;
+function rand(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
