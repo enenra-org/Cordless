@@ -61,18 +61,19 @@ function mute(client, channel, args, msg) {
     data = SDM.readServerData(channel.guild.id);
     if (channel.guild.roles.find(val => val.name === "mute") != null) {
         console.log("role exists");
+        msg.mentions.members.first().removeRoles(msg.mentions.members.first().roles).then(console.log).catch(console.error)
+        msg.mentions.members.first().addRole(channel.guild.roles.find(val => val.name === "mute"));
     } else {
         console.log("role doesn't exist");
         channel.guild.createRole({
             name: "mute",
-            color: "BLACK",
+            color: "375575883097833483",
             hoist: false,
             mentionable: false,
             position: 30,
             permissions: ["READ_MESSAGE_HISTORY", "CONNECT"]
         });
-        data.mute.roleID = channel.guild.roles.find(val => val.name === "mute");
-        console.log("created mute role");
+        msg.mentions.members.first().addRole(channel.guild.roles.find(val => val.name === "mute"));
         SDM.saveServerData(channel.guild.id, data);
     }
 
@@ -99,6 +100,16 @@ function welcomeSetup(client, channel, args) {
     SDM.saveServerData(channel.guild.id, data);
     channel.send("Channel ID Set for welcome message");
 };
+function prof (client, channel, args) {
+    data = SDM.readServerData(channel.guild.id);
+    data.profanity = !data.profanity;
+    if (data.profanity == true) {
+        channel.send("Profanity filter on! :thumbsup: ");
+    } else {
+        channel.send("Profanity filter off?!?!?! :rage:")
+    }
+    SDM.saveServerData(channel.guild.id, data);
+}
 function welcomeMessage(client, channel, args) {
     data = SDM.readServerData(channel.guild.id);
     if (data.welcomeMessages.welcomeMessageEnabled = false) {
@@ -133,7 +144,7 @@ function leaveSetup(client, channel, args) {
     SDM.saveServerData(channel.guild.id, data);
     channel.send("Channel ID Set for leave message");
 };
-function leaveMessage(client, channel, args) {
+function leaveMessage(client, channel, args,msg) {
     data = SDM.readServerData(channel.guild.id);
     if (data.leaveMessages.leaveMessageEnabled = false) {
         channel.send("You need to enter &leave-setup first!!!");
@@ -149,6 +160,16 @@ function leaveMessage(client, channel, args) {
     console.log(message);
     channel.send("Channel thingy Set for leave message");
 };
+function msgdel(client,channel,args,message) {
+    if (isNaN(args[0])) {
+        channel.send("Please enter a number of messages to delete!");
+    }
+    number = Number(args[0])+1;
+    console.log(number);
+    message.channel.bulkDelete(number).then(() => {
+        message.channel.send("**Deleted "+args[0]+" messages.**").then(msg => msg.delete(3000));
+    });
+}
 function delLeave(client,channel,args) {
     data = SDM.readServerData(channel.guild.id);
     data.leaveMessages.leaveMessageEnabled = false;
@@ -172,7 +193,9 @@ helpInformation["welcome-message"] = "Sets Welcome Message with $name as name an
 helpInformation["welcome-stop"] = "Stops the welcome messages. Turn back on with setup!"
 helpInformation["leave-setup"] = "Sets user leave channel ID";
 helpInformation["leave-message"] = "Sets leave Message with $name as name and $count as member count";
-helpInformation["leave-stop"] = "Stops the leave messages. Turn back on with setup!"
+helpInformation["leave-stop"] = "Stops the leave messages. Turn back on with setup!";
+helpInformation["clear"] = "clear a number of messages with this command!";
+helpInformation["prof"] = "toggles profanity filter!";
 
 commandsTable["mute"] = mute;
 commandsTable["embed"] = makeEmbed;
@@ -185,3 +208,5 @@ commandsTable["welcome-stop"] = delWelcome;
 commandsTable["leave-setup"] = leaveSetup;
 commandsTable["leave-message"] = leaveMessage;
 commandsTable["leave-stop"] = delLeave;
+commandsTable["clear"] = msgdel;
+commandsTable["prof"] = prof;

@@ -14,6 +14,7 @@ exports.readServerData = function (guildID) {
                 "leaveMessageEnabled": false,
                 "mess" : ""
             },
+            "profanity":false,
             "mute": {
                 "roleID": ""
             }
