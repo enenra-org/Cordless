@@ -41,16 +41,14 @@ function ping(client, channel, args) {
     channel.send({ embed });
 }
 function fml(client,channel,args) {
-    //Making SFW
-    /*(async () => {
+    (async () => {
         array = []
         let feed = await parser.parseURL('https://www.fmylife.com/rss');
         feed.items.forEach(item => {
             array.push(item.content);
           });
         channel.send(array[rand(0,array.length)]);
-      })();*/
-    channel.send("This command is under development!!!");
+      })();
 }
 function makeEmbed(client, channel, args) {
     if (isNaN(args[0])) {

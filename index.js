@@ -20,36 +20,45 @@ client.on('ready', () => {
 
 client.on('message', (msg) => {
     data = SDM.readServerData(msg.member.guild.id);
-    if (msg.author.bot) return;
-    if (!msg.content.startsWith("&") && data.profanity) {
+    if (msg.author.bot) {
         checker = msg.content.toLowerCase();
         for (i = 0; i < badwords.length; i++) {
             if (checker.includes(badwords[i])) {
                 msg.delete(1);
-                msg.channel.send(":rage: NO CURSING!! :rage: ");
+                msg.channel.send("Sorry! This bot response has been removed as it has been deemed inapropriate...");
             }
         }
-    } else if (msg.content == "&startflow") {
-        msg.channel.send("THE MEMEFLOW HAS BEGUN!!!!!!!!!!!!!!!")
-        mannn = setInterval(function () {
-            thingy(client, msg)
-            if (rip) {
-                msg.channel.send("STOPPPEDDDD!!!!");
-                rip = false;
-                clearInterval(mannn);
+    } else {
+        if ((!msg.content.startsWith("&") && data.profanity) && !msg.author.bot) {
+            checker = msg.content.toLowerCase();
+            for (i = 0; i < badwords.length; i++) {
+                if (checker.includes(badwords[i])) {
+                    msg.delete(1);
+                    msg.channel.send(":rage: NO CURSING!! :rage: ");
+                }
             }
-        }, 10000);
-    } else if (msg.content == "&stopflow") {
-        rip = true;
-        msg.channel.send("Memeflow will soon stop....")
-    } else if (msg.content == "&meme") {
-        thingy(client, msg);
+        } else if (msg.content == "&startflow") {
+            msg.channel.send("THE MEMEFLOW HAS BEGUN!!!!!!!!!!!!!!!")
+            mannn = setInterval(function () {
+                thingy(client, msg)
+                if (rip) {
+                    msg.channel.send("STOPPPEDDDD!!!!");
+                    rip = false;
+                    clearInterval(mannn);
+                }
+            }, 10000);
+        } else if (msg.content == "&stopflow") {
+            rip = true;
+            msg.channel.send("Memeflow will soon stop....")
+        } else if (msg.content == "&meme") {
+            thingy(client, msg);
+        }
+        messy = msg.content.slice(1);
+        args = messy.split(" ");
+        command = args.shift();
+        command = command.toLowerCase();
+        commands.runCommand(command, args, msg.channel, client, msg);
     }
-    messy = msg.content.slice(1);
-    args = messy.split(" ");
-    command = args.shift();
-    command = command.toLowerCase();
-    commands.runCommand(command, args, msg.channel, client, msg);
 });
 client.on('guildMemberAdd', member => {
     data = SDM.readServerData(member.guild.id);
