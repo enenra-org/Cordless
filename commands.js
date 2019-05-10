@@ -41,14 +41,16 @@ function ping(client, channel, args) {
     channel.send({ embed });
 }
 function fml(client,channel,args) {
-    (async () => {
+    //Making SFW
+    /*(async () => {
         array = []
         let feed = await parser.parseURL('https://www.fmylife.com/rss');
         feed.items.forEach(item => {
             array.push(item.content);
           });
         channel.send(array[rand(0,array.length)]);
-      })();
+      })();*/
+    channel.send("This command is under development!!!");
 }
 function makeEmbed(client, channel, args) {
     if (isNaN(args[0])) {
@@ -175,11 +177,14 @@ function leaveMessage(client, channel, args,msg) {
 function msgdel(client,channel,args,message) {
     if (isNaN(args[0])) {
         channel.send("Please enter a number of messages to delete!");
+        return;
     }
     number = Number(args[0])+1;
     console.log(number);
     message.channel.bulkDelete(number).then(() => {
         message.channel.send("**Deleted "+args[0]+" messages.**").then(msg => msg.delete(3000));
+    }).catch(() => {
+        channel.send("Max of 99 messages allowed!!!");
     });
 }
 function delLeave(client,channel,args) {
@@ -211,6 +216,7 @@ helpInformation["prof"] = "toggles profanity filter!";
 helpInformation["startflow"] = "Starts a flow of memes in a channel!"
 helpInformation["stopflow"] = "Stops a flow of memes in a channel!"
 helpInformation["fml"] = "Gives a random fml"
+helpInformation["meme"] = "one. single. meme."
 
 commandsTable["mute"] = mute;
 commandsTable["embed"] = makeEmbed;

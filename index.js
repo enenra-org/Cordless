@@ -42,6 +42,8 @@ client.on('message', (msg) => {
     } else if (msg.content == "&stopflow") {
         rip = true;
         msg.channel.send("Memeflow will soon stop....")
+    } else if (msg.content == "&meme") {
+        thingy(client, msg);
     }
     messy = msg.content.slice(1);
     args = messy.split(" ");
