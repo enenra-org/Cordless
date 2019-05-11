@@ -24,6 +24,20 @@ function help(client, channel, args) {
     }
     channel.send({ embed });
 }
+function clearchan(client, channel, args,msg) {
+    //DEBBUGEING
+    async function clear() {
+        msg.delete();
+        var fetched = 1;
+        while (fetched.size > 0) {
+            fetched = await msg.channel.fetchMessages({limit: 99});
+            msg.channel.bulkDelete(fetched);
+        }
+        channel.send("Deleted all!!!");
+        msg.delete(3000);
+    }
+    clear();
+}
 
 function argPrint(client, channel, args) {
     channel.send(args[0]);
