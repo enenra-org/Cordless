@@ -28,10 +28,6 @@ function help(client, channel, args) {
 function argPrint(client, channel, args) {
     channel.send(args[0]);
 }
-
-function setupWelcome(client, channel, args) {
-
-}
 //Basic ping pong command.  Returns user's ping
 function ping(client, channel, args) {
     const embed = {
@@ -184,6 +180,9 @@ function msgdel(client,channel,args,message) {
     }).catch(() => {
         channel.send("Max of 99 messages allowed!!!");
     });
+}
+function join() {
+    
 }
 function delLeave(client,channel,args) {
     data = SDM.readServerData(channel.guild.id);
