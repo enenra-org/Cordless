@@ -66,12 +66,13 @@ client.on('message', (msg) => {
     } else if (msg.content == "&meme") {
         thingy(client, msg);
     }
-    messy = msg.content.slice(1);
-    args = messy.split(" ");
-    command = args.shift();
-    command = command.toLowerCase();
-    commands.runCommand(command, args, msg.channel, client, msg);
-
+    if (msg.content.startsWith("&")) {
+        messy = msg.content.slice(1);
+        args = messy.split(" ");
+        command = args.shift();
+        command = command.toLowerCase();
+        commands.runCommand(command, args, msg.channel, client, msg);
+    }
 });
 client.on('guildMemberAdd', member => {
     data = SDM.readServerData(member.guild.id);
