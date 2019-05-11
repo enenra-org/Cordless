@@ -38,6 +38,7 @@ client.on('ready', () => {
 });
 
 client.on('message', (msg) => {
+    if (msg.guild=== null) {return}
     data = SDM.readServerData(msg.member.guild.id);
     if (msg.author.bot) {
         return;
