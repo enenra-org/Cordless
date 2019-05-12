@@ -12,6 +12,7 @@ rip = false;
 const music = new Music(client, {
     youtubeKey: privateConfig.youtube,
     prefix: "&",
+    maxQueueSize:9999,
     anyoneCanSkip: true,
     helpCmd: "helpmusic",
     loopCmd: "loop",
@@ -23,7 +24,8 @@ const music = new Music(client, {
     resumeCmd: "resume",
     volumeCmd: "setvol",
     leaveCmd: "leavemus",
-    searchCmd: "search"
+    searchCmd: "search",
+    
 });
 process.on('uncaughtException', function (err) {
     console.log('Caught exception: ', err);
