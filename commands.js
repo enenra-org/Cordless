@@ -99,14 +99,41 @@ function setupreaction(client,channel,args,msg) {
             })
             .catch(console.log);
     }
-    data = SDM.readServerData(channel.guild.id);
-    data.reactionMessage.messageID = args[1];
-    data.reactionMessage.reaction = args[2];
-    data.reactionMessage.roleID = args[3];
-    data.reactionMessage.enabled = true;
-    SDM.saveServerData(channel.guild.id, data);
     sendReact();
+    data = SDM.readServerData(channel.guild.id);
+    data.reactions[String(data.reactions.count)] = {};
+    data.reactions[String(data.reactions.count)].messageID = args[1];
+    data.reactions[String(data.reactions.count)].reaction = args[2];
+    data.reactions[String(data.reactions.count)].roleID = args[3];
+    data.reactions.enabled = true;
+    data.reactions.count+=1;
+    SDM.saveServerData(channel.guild.id, data);
     channel.send("Set reaction message role! :thumbsup:");
+}
+function clearReact(client,channel,args,msg) {
+    if (!msg.member.hasPermission("ADMINISTRATOR")){
+        channel.send("You do not have the permissions to run this command!");
+        return;
+    }else if (isNaN(args[0])) {
+        channel.send("We need your message to be formatted `&clearreaction messageID`");
+        return;
+    }
+    data = SDM.readServerData(channel.guild.id);
+    count = 0;
+    while (count < data.reactions.count) {
+        console.log("while");
+        try {
+        if (data.reactions[String(count)].messageID == args[0]) {
+            console.log("if");
+            delete data.reactions[String(count)];
+        };
+        } catch {
+            console.log("lol clear eer sccorse");
+        }
+        count+=1;
+    }
+    SDM.saveServerData(channel.guild.id, data);
+    channel.send("Reaction has been deleted!");
 }
 //creates mute role
 function mute(client, channel, args, msg) {
@@ -319,6 +346,7 @@ commandsTable["prof"] = prof;
 commandsTable["fml"] = fml;
 commandsTable["info"] = info;
 commandsTable["setupreaction"] = setupreaction;
+commandsTable["clearreaction"] = clearReact;
 function rand(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);

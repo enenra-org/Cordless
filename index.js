@@ -6,7 +6,7 @@ const SDM = require('./server-data-manager');
 const testChannel = "575022379756027904";
 const Music = require('discord.js-musicbot-addon-v2');
 const memechan = ["https://www.reddit.com/r/dankmemes/rising/.json", "https://www.reddit.com/r/me_irl/rising/.json", "https://www.reddit.com/r/memes/rising/.json"];
-const badwords = ["4r5e", "5h1t", "5hit", "a55", "anal", "anus", "ar5e", "arrse", "arse", "ass", "a_s_s", "b!tch", "b00bs", "b17ch", "b1tch", "bi+ch", "biatch", "bitch", "blow job", "blowjob", "blowjobs", "boiolas", "bollock", "bollok", "boner", "boob", "booobs", "boooobs", "booooobs", "booooooobs", "breasts", "buttplug", "c0ck", "c0cksucker", "cawk", "clit", "clitoris", "clits","cnut", "cock", "cok", "cox", "cum", "cunt", "cyalis", "d1ck","damn", "dick", "dickhead", "dildo", "dildos", "dink", "dinks", "dirsa", "dlck", "dog-fucker", "doggin", "dogging","donkeyribber", "doosh", "duche", "dyke", "ejaculate", "ejaculated", "ejaculates", "ejaculating", "ejaculatings", "ejaculation","ejakulate", "f u c k", "f u c k e r", "f4nny", "fag", "fcuk", "feck", "felching", "flange", "fook", "fooker", "fuck", "fuk", "fux", "f_u_c_k", "gaysex", "hell", "hoar", "hoer", "hore", "horniest","horny", "hotsex", "jack-off", "jackoff", "jerk-off", "kock", "kondum", "kum", "kunilingus","l3i+ch", "l3itch", "labia", "lusting", "m45terbate", "ma5terb8", "ma5terbate", "masochist", "master-bate", "masterb8", "masterbat*", "masterbat3", "masterbate", "masterbation", "masterbations", "masturbate", "mo-fo", "mof0","mofo", "mothafuck", "mothafucka", "mothafuckas", "mothafuckaz", "mothafucked", "mothafucker", "mothafuckers", "mothafuckin","mothafucking", "mothafuckings", "mothafucks", "mother fucker", "motherfuck", "motherfucked", "motherfucker", "motherfuckers","motherfuckin", "motherfucking", "motherfuckings", "motherfuckka", "motherfucks", "muff", "muthafecker", "muthafuckker","muther", "mutherfucker", "n1gga", "n1gger", "nigg3r", "nigg4h", "nigga", "niggah", "niggas", "niggaz", "nigger","niggers", "numbnuts", "nutsack", "orgasim", "orgasims", "orgasm","orgasms", "p0rn", "pawn", "pecker", "penis", "penisfucker", "phonesex", "phuck", "phuk", "phuked", "phuking", "phukked","phukking", "phuks", "phuq", "pigfucker", "pimpis", "piss", "porn", "porno", "pube", "pusse", "pussi","pussies", "pussy", "pussys", "rectum", "retard", "rimjaw", "rimming", "s hit", "semen", "sex", "sh!+", "sh!t", "sh1t", "shag", "shagger", "shaggin", "shi+", "shit", "skank", "slut", "sluts", "smegma", "smut", "snatch", "s_h_i_t", "t1tt1e5", "t1tties", "teets", "testical", "testicle", "tit", "vagina","whoar", "whore"];
+const badwords = ["4r5e", "5h1t", "5hit", "a55", "anal", "anus", "ar5e", "arrse", "arse", "ass", "a_s_s", "b!tch", "b00bs", "b17ch", "b1tch", "bi+ch", "biatch", "bitch", "blow job", "blowjob", "blowjobs", "boiolas", "bollock", "bollok", "boner", "boob", "booobs", "boooobs", "booooobs", "booooooobs", "breasts", "buttplug", "c0ck", "c0cksucker", "cawk", "clit", "clitoris", "clits", "cnut", "cock", "cok", "cox", "cum", "cunt", "cyalis", "d1ck", "damn", "dick", "dickhead", "dildo", "dildos", "dink", "dinks", "dirsa", "dlck", "dog-fucker", "doggin", "dogging", "donkeyribber", "doosh", "duche", "dyke", "ejaculate", "ejaculated", "ejaculates", "ejaculating", "ejaculatings", "ejaculation", "ejakulate", "f u c k", "f u c k e r", "f4nny", "fag", "fcuk", "feck", "felching", "flange", "fook", "fooker", "fuck", "fuk", "fux", "f_u_c_k", "gaysex", "hell", "hoar", "hoer", "hore", "horniest", "horny", "hotsex", "jack-off", "jackoff", "jerk-off", "kock", "kondum", "kum", "kunilingus", "l3i+ch", "l3itch", "labia", "lusting", "m45terbate", "ma5terb8", "ma5terbate", "masochist", "master-bate", "masterb8", "masterbat*", "masterbat3", "masterbate", "masterbation", "masterbations", "masturbate", "mo-fo", "mof0", "mofo", "mothafuck", "mothafucka", "mothafuckas", "mothafuckaz", "mothafucked", "mothafucker", "mothafuckers", "mothafuckin", "mothafucking", "mothafuckings", "mothafucks", "mother fucker", "motherfuck", "motherfucked", "motherfucker", "motherfuckers", "motherfuckin", "motherfucking", "motherfuckings", "motherfuckka", "motherfucks", "muff", "muthafecker", "muthafuckker", "muther", "mutherfucker", "n1gga", "n1gger", "nigg3r", "nigg4h", "nigga", "niggah", "niggas", "niggaz", "nigger", "niggers", "numbnuts", "nutsack", "orgasim", "orgasims", "orgasm", "orgasms", "p0rn", "pawn", "pecker", "penis", "penisfucker", "phonesex", "phuck", "phuk", "phuked", "phuking", "phukked", "phukking", "phuks", "phuq", "pigfucker", "pimpis", "piss", "porn", "porno", "pube", "pusse", "pussi", "pussies", "pussy", "pussys", "rectum", "retard", "rimjaw", "rimming", "s hit", "semen", "sex", "sh!+", "sh!t", "sh1t", "shag", "shagger", "shaggin", "shi+", "shit", "skank", "slut", "sluts", "smegma", "smut", "snatch", "s_h_i_t", "t1tt1e5", "t1tties", "teets", "testical", "testicle", "tit", "vagina", "whoar", "whore"];
 const client = new discord.Client();
 rip = false;
 const music = new Music(client, {
@@ -29,27 +29,31 @@ const music = new Music(client, {
 process.on('uncaughtException', function (err) {
     console.log('Caught exception: ', err);
 });
-client.on("messageReactionAdd", (reaction,user) => {
-    console.log(reaction,user.lastMessage.id,"ran");
-    data = SDM.readServerData(user.lastMessage.member.guild.id);
-    if (!(reaction.emoji.name == data.reactionMessage.reaction && reaction.message.id == data.reactionMessage.messageID && user.bot) && data.reactionMessage.enabled) {
-        console.log(reaction,user.lastMessage.id,"POOOOOO");
-    };
-    user.lastMessage.member.addRole(data.reactionMessage.roleID);
-});
+
 client.on("raw", (packet) => {
-    if (packet.t != "MESSAGE_REACTION_ADD") {return}
+    if (packet.t != "MESSAGE_REACTION_ADD") { return }
     console.log(packet);
     data = SDM.readServerData(packet.d.guild_id);
-    if (!(packet.d.emoji.name == data.reactionMessage.reaction && packet.d.message_id == data.reactionMessage.messageID && data.reactionMessage.enabled)) {
-        console.log("POOOOOO");
-    };
-    console.log(String(data.reactionMessage.roleID));
-    client.guilds.get(packet.d.guild_id).members.get(packet.d.user_id).addRole(data.reactionMessage.roleID);
+    count = 0;
+    while (count < data.reactions.count && data.reactions.enabled) {
+        console.log("IN TH EWHILE LOOP");
+        try {
+        if (packet.d.emoji.name == data.reactions[String(count)].reaction && packet.d.message_id == data.reactions[String(count)].messageID) {
+            console.log("MOOP TRIGGERED");
+            console.log(String(data.reactions[String(count)].roleID));
+            client.guilds.get(packet.d.guild_id).members.get(packet.d.user_id).addRole(data.reactions[String(count)].roleID)
+                .then(console.log)
+                .catch(console.log);
+        };
+    } catch {
+        console.log('lol an error occured');
+    }
+        count += 1;
+    }
 });
 client.on('ready', () => {
     console.log('Tecton bot on and connected');
-    client.user.setActivity('&help | cordless.tecton.tech | '+String(client.guilds.size)+" servers", { type: 'PLAYING' })
+    client.user.setActivity('&help | cordless.tecton.tech | ' + String(client.guilds.size) + " servers", { type: 'PLAYING' })
     try {
         client.channels.get(testChannel).send('Bot Operational');
     } catch {
@@ -58,7 +62,7 @@ client.on('ready', () => {
 });
 
 client.on('message', (msg) => {
-    if (msg.guild == null || msg.author.bot) {return}
+    if (msg.guild == null || msg.author.bot) { return }
     data = SDM.readServerData(msg.member.guild.id);
     if (msg.author.bot && !msg.channel.nsfw) {
         checker = msg.content.toLowerCase();
