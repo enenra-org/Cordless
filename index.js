@@ -58,7 +58,7 @@ client.on('ready', () => {
 });
 
 client.on('message', (msg) => {
-    if (msg.guild == null) {return}
+    if (msg.guild == null || msg.author.bot) {return}
     data = SDM.readServerData(msg.member.guild.id);
     if (msg.author.bot && !msg.channel.nsfw) {
         checker = msg.content.toLowerCase();
