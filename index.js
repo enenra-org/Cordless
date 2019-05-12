@@ -32,8 +32,8 @@ process.on('uncaughtException', function (err) {
 
 client.on("raw", (packet) => {
     if (packet.t != "MESSAGE_REACTION_ADD") { return }
-    console.log(packet);
     data = SDM.readServerData(packet.d.guild_id);
+    console.log(packet);
     count = 0;
     while (count < data.reactions.count && data.reactions.enabled) {
         console.log("IN TH EWHILE LOOP");
