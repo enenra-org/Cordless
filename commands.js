@@ -57,7 +57,7 @@ function fml(client,channel,args) {
         feed.items.forEach(item => {
             array.push(item.content);
           });
-        channel.send(array[rand(0,array.length)]);
+        channel.send("**Warning! Possible NSFW content** ||"+array[rand(0,array.length)]+"||");
       })();
 }
 function makeEmbed(client, channel, args,msg) {

@@ -82,7 +82,7 @@ client.on('message', (msg) => {
             }
         }
     } else if (msg.content == "&startflow") {
-        msg.channel.send("THE MEMEFLOW HAS BEGUN!!!!!!!!!!!!!!!")
+        msg.channel.send("THE MEMEFLOW HAS BEGUN!!!!!!!!!!!!!!!(**Warning! Possible NSFW content**)")
         mannn = setInterval(function () {
             thingy(client, msg)
             if (rip) {
