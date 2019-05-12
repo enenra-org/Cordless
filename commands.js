@@ -61,6 +61,10 @@ function fml(client,channel,args) {
       })();
 }
 function makeEmbed(client, channel, args) {
+    if (!msg.member.hasPermission("ADMINISTRATOR")){
+        channel.send("You do not have the permissions to run this command!");
+        return;
+    }
     if (isNaN(args[0])) {
         channel.send("Please input a number for the color.");
         return;
@@ -80,6 +84,10 @@ function makeEmbed(client, channel, args) {
 }
 //creates mute role
 function mute(client, channel, args, msg) {
+    if (!msg.member.hasPermission("ADMINISTRATOR")){
+        channel.send("You do not have the permissions to run this command!");
+        return;
+    }
     data = SDM.readServerData(channel.guild.id);
     if (channel.guild.roles.find(val => val.name === "mute") != null) {
         console.log("role exists");
@@ -111,6 +119,10 @@ function mute(client, channel, args, msg) {
 }
 //add welcome channel
 function welcomeSetup(client, channel, args) {
+    if (!msg.member.hasPermission("ADMINISTRATOR")){
+        channel.send("You do not have the permissions to run this command!");
+        return;
+    }
     if (isNaN(args[0])) {
         channel.send("Please input a channel ID for the welcome.");
         return;
@@ -122,7 +134,11 @@ function welcomeSetup(client, channel, args) {
     SDM.saveServerData(channel.guild.id, data);
     channel.send("Channel ID Set for welcome message");
 };
-function prof (client, channel, args) {
+function prof (client, channel, args,msg) {
+    if (!msg.member.hasPermission("ADMINISTRATOR")){
+        channel.send("You do not have the permissions to run this command!");
+        return;
+    }
     data = SDM.readServerData(channel.guild.id);
     data.profanity = !data.profanity;
     if (data.profanity == true) {
@@ -133,6 +149,10 @@ function prof (client, channel, args) {
     SDM.saveServerData(channel.guild.id, data);
 }
 function welcomeMessage(client, channel, args) {
+    if (!msg.member.hasPermission("ADMINISTRATOR")){
+        channel.send("You do not have the permissions to run this command!");
+        return;
+    }
     data = SDM.readServerData(channel.guild.id);
     if (data.welcomeMessages.welcomeMessageEnabled = false) {
         channel.send("You need to enter &welcome-setup first!!!");
@@ -149,12 +169,20 @@ function welcomeMessage(client, channel, args) {
     channel.send("Channel thingy Set for welcome message");
 };
 function delWelcome(client,channel,args) {
+    if (!msg.member.hasPermission("ADMINISTRATOR")){
+        channel.send("You do not have the permissions to run this command!");
+        return;
+    }
     data = SDM.readServerData(channel.guild.id);
     data.welcomeMessages.welcomeMessageEnabled = false;
     SDM.saveServerData(channel.guild.id, data);
     channel.send("Stopped welcomes!")
 }
 function leaveSetup(client, channel, args) {
+    if (!msg.member.hasPermission("ADMINISTRATOR")){
+        channel.send("You do not have the permissions to run this command!");
+        return;
+    }
     if (isNaN(args[0])) {
         channel.send("Please input a channel ID for the leave");
         return;
@@ -167,6 +195,10 @@ function leaveSetup(client, channel, args) {
     channel.send("Channel ID Set for leave message");
 };
 function leaveMessage(client, channel, args,msg) {
+    if (!msg.member.hasPermission("ADMINISTRATOR")){
+        channel.send("You do not have the permissions to run this command!");
+        return;
+    }
     data = SDM.readServerData(channel.guild.id);
     if (data.leaveMessages.leaveMessageEnabled = false) {
         channel.send("You need to enter &leave-setup first!!!");
@@ -183,6 +215,10 @@ function leaveMessage(client, channel, args,msg) {
     channel.send("Channel thingy Set for leave message");
 };
 function msgdel(client,channel,args,message) {
+    if (!msg.member.hasPermission("MANAGE_MESSAGES")){
+        channel.send("You do not have the permissions to run this command!");
+        return;
+    }
     if (isNaN(args[0])) {
         channel.send("Please enter a number of messages to delete!");
         return;
@@ -199,6 +235,10 @@ function join() {
     
 }
 function delLeave(client,channel,args) {
+    if (!msg.member.hasPermission("ADMINISTRATOR")){
+        channel.send("You do not have the permissions to run this command!");
+        return;
+    }
     data = SDM.readServerData(channel.guild.id);
     data.leaveMessages.leaveMessageEnabled = false;
     SDM.saveServerData(channel.guild.id, data);
