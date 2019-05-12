@@ -60,7 +60,7 @@ function fml(client,channel,args) {
         channel.send(array[rand(0,array.length)]);
       })();
 }
-function makeEmbed(client, channel, args) {
+function makeEmbed(client, channel, args,msg) {
     if (!msg.member.hasPermission("ADMINISTRATOR")){
         channel.send("You do not have the permissions to run this command!");
         return;
@@ -118,7 +118,7 @@ function mute(client, channel, args, msg) {
 
 }
 //add welcome channel
-function welcomeSetup(client, channel, args) {
+function welcomeSetup(client, channel, args,msg) {
     if (!msg.member.hasPermission("ADMINISTRATOR")){
         channel.send("You do not have the permissions to run this command!");
         return;
@@ -148,7 +148,7 @@ function prof (client, channel, args,msg) {
     }
     SDM.saveServerData(channel.guild.id, data);
 }
-function welcomeMessage(client, channel, args) {
+function welcomeMessage(client, channel, args,msg) {
     if (!msg.member.hasPermission("ADMINISTRATOR")){
         channel.send("You do not have the permissions to run this command!");
         return;
@@ -168,7 +168,7 @@ function welcomeMessage(client, channel, args) {
     console.log(message);
     channel.send("Channel thingy Set for welcome message");
 };
-function delWelcome(client,channel,args) {
+function delWelcome(client,channel,args,msg) {
     if (!msg.member.hasPermission("ADMINISTRATOR")){
         channel.send("You do not have the permissions to run this command!");
         return;
@@ -178,7 +178,7 @@ function delWelcome(client,channel,args) {
     SDM.saveServerData(channel.guild.id, data);
     channel.send("Stopped welcomes!")
 }
-function leaveSetup(client, channel, args) {
+function leaveSetup(client, channel, args,msg) {
     if (!msg.member.hasPermission("ADMINISTRATOR")){
         channel.send("You do not have the permissions to run this command!");
         return;
@@ -215,7 +215,7 @@ function leaveMessage(client, channel, args,msg) {
     channel.send("Channel thingy Set for leave message");
 };
 function msgdel(client,channel,args,message) {
-    if (!msg.member.hasPermission("MANAGE_MESSAGES")){
+    if (!message.member.hasPermission("MANAGE_MESSAGES")){
         channel.send("You do not have the permissions to run this command!");
         return;
     }
@@ -234,7 +234,7 @@ function msgdel(client,channel,args,message) {
 function join() {
     
 }
-function delLeave(client,channel,args) {
+function delLeave(client,channel,args,msg) {
     if (!msg.member.hasPermission("ADMINISTRATOR")){
         channel.send("You do not have the permissions to run this command!");
         return;
