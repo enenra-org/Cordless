@@ -12,7 +12,6 @@ rip = false;
 const music = new Music(client, {
     youtubeKey: privateConfig.youtube,
     prefix: "&",
-    djRole: "team",
     anyoneCanSkip: true,
     helpCmd: "helpmusic",
     loopCmd: "loop",

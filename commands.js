@@ -153,7 +153,7 @@ function mute(client, channel, args, msg) {
             color: "375575883097833483",
             hoist: false,
             mentionable: false,
-            position: 30,
+            position: 1,
             permissions: ["READ_MESSAGE_HISTORY", "CONNECT"]
         });
         msg.mentions.members.first().addRole(channel.guild.roles.find(val => val.name === "mute"));
