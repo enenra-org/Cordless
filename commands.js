@@ -103,9 +103,9 @@ function setupreaction(client,channel,args,msg) {
     data.reactionMessage.messageID = args[1];
     data.reactionMessage.reaction = args[2];
     data.reactionMessage.roleID = args[3];
-    sendReact();
     data.reactionMessage.enabled = true;
     SDM.saveServerData(channel.guild.id, data);
+    sendReact();
     channel.send("Set reaction message role! :thumbsup:");
 }
 //creates mute role
