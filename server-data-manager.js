@@ -17,6 +17,12 @@ exports.readServerData = function (guildID) {
             "profanity":false,
             "mute": {
                 "roleID": ""
+            },
+            "reactionMessage" : {
+                "messageID" :"",
+                "enabled":false,
+                "reaction":"",
+                "roleID":""
             }
         }
     }

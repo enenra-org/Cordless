@@ -26,7 +26,27 @@ const music = new Music(client, {
     leaveCmd: "leavemus",
     searchCmd: "search"
 });
-
+process.on('uncaughtException', function (err) {
+    console.log('Caught exception: ', err);
+});
+client.on("messageReactionAdd", (reaction,user) => {
+    console.log(reaction,user.lastMessage.id,"ran");
+    data = SDM.readServerData(user.lastMessage.member.guild.id);
+    if (!(reaction.emoji.name == data.reactionMessage.reaction && reaction.message.id == data.reactionMessage.messageID && user.bot) && data.reactionMessage.enabled) {
+        console.log(reaction,user.lastMessage.id,"POOOOOO");
+    };
+    user.lastMessage.member.addRole(data.reactionMessage.roleID);
+});
+client.on("raw", (packet) => {
+    if (packet.t != "MESSAGE_REACTION_ADD") {return}
+    console.log(packet);
+    data = SDM.readServerData(packet.d.guild_id);
+    if (!(packet.d.emoji.name == data.reactionMessage.reaction && packet.d.message_id == data.reactionMessage.messageID && data.reactionMessage.enabled)) {
+        console.log("POOOOOO");
+    };
+    console.log(String(data.reactionMessage.roleID));
+    client.guilds.get(packet.d.guild_id).members.get(packet.d.user_id).addRole(data.reactionMessage.roleID);
+});
 client.on('ready', () => {
     console.log('Tecton bot on and connected');
     client.user.setActivity('&help | cordless.tecton.tech | '+String(client.guilds.size)+" servers", { type: 'PLAYING' })

@@ -82,6 +82,32 @@ function makeEmbed(client, channel, args,msg) {
     embed.addField(args[0], args[1]);
     channel.send({ embed });
 }
+function setupreaction(client,channel,args,msg) {
+    if (!msg.member.hasPermission("ADMINISTRATOR")){
+        channel.send("You do not have the permissions to run this command!");
+        return;
+    }else if (isNaN(args[0]) || args.length < 4) {
+        channel.send("We need your message to be formatted `&setupreaction channelID messageID reaction roleID`")
+        return;
+    }
+    async function sendReact() {
+        await client.channels.get(args[0]).fetchMessage(args[1])
+            .then( message => {
+                message.react(args[2])
+                    .then(console.log)
+                    .catch(console.log);
+            })
+            .catch(console.log);
+    }
+    data = SDM.readServerData(channel.guild.id);
+    data.reactionMessage.messageID = args[1];
+    data.reactionMessage.reaction = args[2];
+    data.reactionMessage.roleID = args[3];
+    sendReact();
+    data.reactionMessage.enabled = true;
+    SDM.saveServerData(channel.guild.id, data);
+    channel.send("Set reaction message role! :thumbsup:");
+}
 //creates mute role
 function mute(client, channel, args, msg) {
     if (!msg.member.hasPermission("ADMINISTRATOR")){
@@ -121,7 +147,7 @@ function info(client,channel,args,msg) {
     embed = new Discord.RichEmbed()
         .setTitle("Info")
         .setColor(0xEFFF00)
-        .setDescription("Hi! This is Cordless, a discord bot for all your needs! \n \n Find our discord server at https://discord.gg/sTCsbew \n \n Thanks for using Cordless!!! :smile: :thumbsup:")
+        .setDescription("Hi! This is Cordless, a discord bot for all your needs! \n \n Find our discord server at https://discord.gg/sTCsbew and view my code at https://github.com/tecton-tech/discord-bot \n \n Thanks for using Cordless!!! :smile: :thumbsup:")
         .setImage("https://cordless.tecton.tech/public/logo.png");
         channel.send(embed);
 }
@@ -292,6 +318,7 @@ commandsTable["clear"] = msgdel;
 commandsTable["prof"] = prof;
 commandsTable["fml"] = fml;
 commandsTable["info"] = info;
+commandsTable["setupreaction"] = setupreaction;
 function rand(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
