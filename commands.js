@@ -117,6 +117,14 @@ function mute(client, channel, args, msg) {
     }
 
 }
+function info(client,channel,args,msg) {
+    embed = new Discord.RichEmbed()
+        .setTitle("Info")
+        .setColor(0xEFFF00)
+        .setDescription("Hi! This is Cordless, a discord bot for all your needs! \n \n Find our discord server at https://discord.gg/sTCsbew \n \n Thanks for using Cordless!!! :smile: :thumbsup:")
+        .setImage("https://cordless.tecton.tech/public/logo.png");
+        channel.send(embed);
+}
 //add welcome channel
 function welcomeSetup(client, channel, args,msg) {
     if (!msg.member.hasPermission("ADMINISTRATOR")){
@@ -283,6 +291,7 @@ commandsTable["leave-stop"] = delLeave;
 commandsTable["clear"] = msgdel;
 commandsTable["prof"] = prof;
 commandsTable["fml"] = fml;
+commandsTable["info"] = info;
 function rand(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
