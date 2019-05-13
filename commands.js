@@ -61,6 +61,7 @@ function fml(client,channel,args) {
       })();
 }
 function makeEmbed(client, channel, args,msg) {
+    msg.delete(1000);
     if (!msg.member.hasPermission("ADMINISTRATOR")){
         channel.send("You do not have the permissions to run this command!");
         return;
@@ -69,10 +70,14 @@ function makeEmbed(client, channel, args,msg) {
         channel.send("Please input a number for the color.");
         return;
     } else if (args.length < 3) {
-
+        channel.send("Please input a number for the color and the text separated by |");
     }
     const embed = new Discord.RichEmbed();
+    try {
     embed.setColor(args[0]);
+    } catch {
+        embed.setColor(0x000000);
+    }
     args.shift();
     temp = args.join(" ");
     args = temp.split("|");
