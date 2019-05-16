@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Cordless Docs</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="/public/logo.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <link rel='stylesheet' href='/css/style.css'>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
+        integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+</head>
+
+<body>
+    <nav class="navbar is-link" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand" style="margin:0;">
+            <a class="navbar-item" href="/">
+                <img src="/public/logo.png">
+            </a>
+            <a id="nav-toggle" role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false"
+                data-target="navbarBasicExample">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+
+        <div id="navbarBasicExample" class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item is-active">
+                    Home
+                </a>
+
+                <a class="navbar-item">
+                    Documentation
+                </a>
+                <a class="navbar-item">
+                    Team
+                </a>
+            </div>
+
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <a href="https://discord.gg/sTCsbew" class="button is-inverted is-outlined is-dark">
+                            <strong>Join the Discord!</strong>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <section class="hero is-primary is-medium">
+        <div class="hero-body">
+            <div class="container has-text-centered">
+                <h1 class="title">Le Documentation</h1>
+                <h1 class="subtitle">ze docs of ze bot</h1>
+            </div>
+        </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-3">
+                    <aside class="is-medium menu">
+                        <p class="menu-label">
+                            categories
+                        </p>
+                        <ul class="menu-list is-hoverable">
+                            <li class="is-active"><a href="#const" class="is-active">Memes</a></li>
+                            <li class="is-active"><a href="#const" class="is-active">Memes</a></li>
+                            <li class="is-active"><a href="#const" class="is-active">Memes</a></li>
+                            <li class="is-active"><a href="#const" class="is-active">Memes</a></li>
+                            <li class="is-active"><a href="#const" class="is-active">Memes</a></li>
+                        </ul>
+                    </aside>
+                </div>
+                <div class="column is-9">
+                    <div class="content is-medium">
+                        <h3 class="title is-3">Commands</h3>
+                        <h3 class="title is-5">Main</h3>
+                        <div class="box">
+                            <h4 id="const" class="title is-3">Prefix</h4>
+                            <article class="message is-primary">
+                                <span class="icon has-text-primary">
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                                <div class="message-body">
+                                    The prefix is by default "&" and can be changed with the following command.
+                                </div>
+                            </article>
+                            <pre><code class="language-javascript">&pre-change &ltnew prefix here&gt</code></pre>
+                        </div>
+                        <h3 class="title is-5">Music</h3>
+                        <div class="box">
+                            <h4 id="const" class="title is-3">Play</h4>
+                            <article class="message is-primary">
+                                <span class="icon has-text-primary">
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                                <div class="message-body">
+                                    This command retrieves the input after it as a YouTube video and plays it in your
+                                    current channel.
+                                </div>
+                            </article>
+                            <pre><code class="language-javascript">&play &ltsong name here&gt</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="hero is-info is-medium">
+        <section class="hero-body">
+            <div class="container has-text-centered">
+                <h1 class="title">This application was designed and created by the whole tecton team!</h1>
+                <h1 class="subtitle">Some special mentions are:</h1>
+            </div>
+        </section>
+    </section>
+    <footer class="footer">
+        <div class="container has-text-centered">
+            <h1 class="title is-6">Cordless, the bot for everything!</h1>
+            <img class="image is-48x48 is-inline" src="/public/logo.png">
+            <h1 style="margin:20px;">AGPL-3.0 Licence</h1>
+            <a style="margin:20px;" href="https://discord.gg/sTCsbew"><i class="fab fa-discord fa-3x"></i></a>
+            <a style="margin:20px;" href="https://github.com/tecton-tech/Discord-Bot"><i class="fab fa-github fa-3x"></i></a>
+            <a style="margin:20px;" href="mailto:neel.redkar@tecton.tech"><i class="fas fa-envelope fa-3x"></i></a>
+        </div>
+    </footer>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/prism/9000.0.1/prism.js'></script>
+    <script>
+        window.addEventListener('resize', () => {
+            const divs = document.querySelectorAll(".menu-list");
+            if (window.innerWidth < 768) {
+                divs.forEach(div => div.classList.add("tags"));
+            }
+            else {
+                divs.forEach(div => div.classList.remove("tags"));
+            }
+        });
+    </script>
+</body>
+
+</html>
