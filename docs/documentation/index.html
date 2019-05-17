@@ -9,6 +9,7 @@
     <link rel='stylesheet' href='/css/style.css'>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
         integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/gh/cferdinandi/smooth-scroll/dist/smooth-scroll.polyfills.min.js"></script>
 </head>
 
 <body>
@@ -64,20 +65,18 @@
                             categories
                         </p>
                         <ul class="menu-list is-hoverable">
-                            <li class="is-active"><a href="#const" class="is-active">Memes</a></li>
-                            <li class="is-active"><a href="#const" class="is-active">Memes</a></li>
-                            <li class="is-active"><a href="#const" class="is-active">Memes</a></li>
-                            <li class="is-active"><a href="#const" class="is-active">Memes</a></li>
-                            <li class="is-active"><a href="#const" class="is-active">Memes</a></li>
+                            <li class="is-active"><a data-scroll href="#main" class="is-active">Main</a></li>
+                            <li class="is-active"><a data-scroll href="#music" class="is-active">Music</a></li>
                         </ul>
                     </aside>
                 </div>
                 <div class="column is-9">
                     <div class="content is-medium">
-                        <h3 class="title is-3">Commands</h3>
-                        <h3 class="title is-5">Main</h3>
+                        <h3 class="title is-1">Commands</h3>
+                        <h3 class="title is-2" id="main">Main</h3>
                         <div class="box">
-                            <h4 id="const" class="title is-3">Prefix</h4>
+                            <h4 class="title is-3">Prefix</h4>
+                            <h4 class="title is-5">ADMIN ONLY</h4>
                             <article class="message is-primary">
                                 <span class="icon has-text-primary">
                                     <i class="fas fa-info-circle"></i>
@@ -88,9 +87,9 @@
                             </article>
                             <pre><code class="language-javascript">&pre-change &ltnew prefix here&gt</code></pre>
                         </div>
-                        <h3 class="title is-5">Music</h3>
+                        <h3 class="title is-2" id="music">Music</h3>
                         <div class="box">
-                            <h4 id="const" class="title is-3">Play</h4>
+                            <h4 class="title is-3">Play</h4>
                             <article class="message is-primary">
                                 <span class="icon has-text-primary">
                                     <i class="fas fa-info-circle"></i>
@@ -101,6 +100,127 @@
                                 </div>
                             </article>
                             <pre><code class="language-javascript">&play &ltsong name here&gt</code></pre>
+                        </div>
+                        <div class="box">
+                            <h4 class="title is-3">Pause</h4>
+                            <article class="message is-primary">
+                                <span class="icon has-text-primary">
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                                <div class="message-body">
+                                    This command pauses the current song queue.
+                                </div>
+                            </article>
+                            <pre><code class="language-javascript">&pause</code></pre>
+                        </div>
+                        <div class="box">
+                            <h4 class="title is-3">Resume</h4>
+                            <article class="message is-primary">
+                                <span class="icon has-text-primary">
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                                <div class="message-body">
+                                    This command resumes a paused song queue.
+                                </div>
+                            </article>
+                            <pre><code class="language-javascript">&resume</code></pre>
+                        </div>
+                        <div class="box">
+                            <h4 class="title is-3">Queue</h4>
+                            <article class="message is-primary">
+                                <span class="icon has-text-primary">
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                                <div class="message-body">
+                                    This command outputs the full queue of songs that are going to play on your server.
+                                </div>
+                            </article>
+                            <pre><code class="language-javascript">&queue</code></pre>
+                        </div>
+                        <div class="box">
+                            <h4 class="title is-3">Skip</h4>
+                            <article class="message is-primary">
+                                <span class="icon has-text-primary">
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                                <div class="message-body">
+                                    This command skips the currently playing song in your server, or skips more.
+                                </div>
+                            </article>
+                            <pre><code class="language-javascript">&skip &ltnumber of songs to skip, defaults to 1&gt</code></pre>
+                        </div>
+                        <div class="box">
+                            <h4 class="title is-3">Loop</h4>
+                            <article class="message is-primary">
+                                <span class="icon has-text-primary">
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                                <div class="message-body">
+                                    This command loops the current queue.
+                                </div>
+                            </article>
+                            <pre><code class="language-javascript">&loop</code></pre>
+                        </div>
+                        <div class="box">
+                            <h4 class="title is-3">Volume</h4>
+                            <article class="message is-primary">
+                                <span class="icon has-text-primary">
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                                <div class="message-body">
+                                    This command sets the volume of the music.
+                                </div>
+                            </article>
+                            <pre><code class="language-javascript">&setvol &lta number between 0-200&gt</code></pre>
+                        </div>
+                        <div class="box">
+                            <h4 class="title is-3">Search</h4>
+                            <article class="message is-primary">
+                                <span class="icon has-text-primary">
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                                <div class="message-body">
+                                    This command searches youtube for your keyword for a song to play.
+                                </div>
+                            </article>
+                            <pre><code class="language-javascript">&search &ltyoutube search keywords&gt</code></pre>
+                        </div>
+                        <div class="box">
+                            <h4 class="title is-3">Clear Queue</h4>
+                            <article class="message is-primary">
+                                <span class="icon has-text-primary">
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                                <div class="message-body">
+                                    This command clears the current song queue.
+                                </div>
+                            </article>
+                            <pre><code class="language-javascript">&clearqueue</code></pre>
+                        </div>
+                        <div class="box">
+                            <h4 class="title is-3">Show Current Song</h4>
+                            <article class="message is-primary">
+                                <span class="icon has-text-primary">
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                                <div class="message-body">
+                                    This command shows the currently playing song.
+                                </div>
+                            </article>
+                            <pre><code class="language-javascript">&np</code></pre>
+                        </div>
+                        <div class="box">
+                            <h4 class="title is-3">Leave Voice Channel</h4>
+                            <h4 class="title is-5">ADMIN ONLY</h4>
+                            <article class="message is-primary">
+                                <span class="icon has-text-primary">
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                                <div class="message-body">
+                                    This command forces Cordless to leave the voice channel.
+                                </div>
+                            </article>
+                            <pre><code class="language-javascript">&leavemus</code></pre>
                         </div>
                     </div>
                 </div>
@@ -121,7 +241,8 @@
             <img class="image is-48x48 is-inline" src="/public/logo.png">
             <h1 style="margin:20px;">AGPL-3.0 Licence</h1>
             <a style="margin:20px;" href="https://discord.gg/sTCsbew"><i class="fab fa-discord fa-3x"></i></a>
-            <a style="margin:20px;" href="https://github.com/tecton-tech/Discord-Bot"><i class="fab fa-github fa-3x"></i></a>
+            <a style="margin:20px;" href="https://github.com/tecton-tech/Discord-Bot"><i
+                    class="fab fa-github fa-3x"></i></a>
             <a style="margin:20px;" href="mailto:neel.redkar@tecton.tech"><i class="fas fa-envelope fa-3x"></i></a>
         </div>
     </footer>
@@ -143,6 +264,9 @@
             else {
                 divs.forEach(div => div.classList.remove("tags"));
             }
+        });
+        var scroll = new SmoothScroll('a[href*="#"]', {
+            speed: 1000
         });
     </script>
 </body>
