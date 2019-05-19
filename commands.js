@@ -18,10 +18,13 @@ commandsTable = {}; // Commands hash table
 function help(client, channel, args) {
     const embed = new Discord.RichEmbed();
     embed.setColor(2012);
-    embed.setTitle("Cordless Bot");
-    for (var info in helpInformation) {
-        embed.addField(info, helpInformation[info]);
-    }
+    embed.setTitle("Cordless Help");
+    embed.setDescription("For a full set of commands and descriptions visit https://cordless.tecton.tech/documentation");
+    embed.addField("General", "For more info on general commands, try `&help general`");
+    embed.addField("Music", "For more info on music commands, try `&help music`");
+    embed.addField("Moderation", "For more info on moderation commands, try `&help mod`");
+    embed.addField("Utility", "For more info on utitlity commands, try `&help util");
+    embed.addField("Memes", "For more info on meme commands, try `&help mem`");
     channel.send({ embed });
 }
 function clearchan(client, channel, args,msg) {
