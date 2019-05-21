@@ -9,6 +9,7 @@
     }
 */
 let Parser = require('rss-parser');
+const privateConfig = require("./private_data/config.json");
 let parser = new Parser();
 const Discord = require('discord.js');
 const SDM = require('./server-data-manager');
@@ -18,13 +19,30 @@ commandsTable = {}; // Commands hash table
 function help(client, channel, args) {
     const embed = new Discord.RichEmbed();
     embed.setColor(2012);
-    embed.setTitle("Cordless Help");
-    embed.setDescription("For a full set of commands and descriptions visit https://cordless.tecton.tech/documentation");
-    embed.addField("General", "For more info on general commands, try `&help general`");
-    embed.addField("Music", "For more info on music commands, try `&help music`");
-    embed.addField("Moderation", "For more info on moderation commands, try `&help mod`");
-    embed.addField("Utility", "For more info on utitlity commands, try `&help util");
-    embed.addField("Memes", "For more info on meme commands, try `&help mem`");
+    if (args[0] == "general") {
+        embed.setTitle("Cordless General Help");
+        embed.addField("General Commands","`help, pre-change, ping`")
+    } else if (args[0] == "music") {
+        embed.setTitle("Cordless Music Help");
+        embed.addField("Music Commands","`play, pause, resume, queue, skip, loop, setvol, search, clearqueue, np, leavemus`");
+    } else if (args[0] == "mod") {
+        embed.setTitle("Cordless Moderation Help");
+        embed.addField("Moderation Commands","`mute, prof`");
+    } else if (args[0] == "util") {
+        embed.setTitle("Cordless Utility Help");
+        embed.addField("Utility Commands","`clear, embed, welcome-message, welcome-setup, welcome-stop, leave-message, leave-setup, leave-stop`");
+    }  else if (args[0] == "mem") {
+        embed.setTitle("Cordless Meme Help");
+        embed.addField("Meme Commands","`startflow, stopflow, meme`");
+    } else {
+        embed.setTitle("Cordless Help");
+        embed.setDescription("For a full set of commands and descriptions visit https://cordless.tecton.tech/documentation");
+        embed.addField("General", "For more info on general commands, try `&help general`");
+        embed.addField("Music", "For more info on music commands, try `&help music`");
+        embed.addField("Moderation", "For more info on moderation commands, try `&help mod`");
+        embed.addField("Utility", "For more info on utitlity commands, try `&help util`");
+        embed.addField("Memes", "For more info on meme commands, try `&help mem`");
+    }
     channel.send({ embed });
 }
 function clearchan(client, channel, args,msg) {
