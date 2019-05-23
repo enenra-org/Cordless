@@ -21,7 +21,7 @@ function help(client, channel, args) {
     embed.setColor(2012);
     if (args[0] == "general") {
         embed.setTitle("Cordless General Help");
-        embed.addField("General Commands","`help, pre-change, ping`")
+        embed.addField("General Commands","`help, pre-change, ping, addanoun`")
     } else if (args[0] == "music") {
         embed.setTitle("Cordless Music Help");
         embed.addField("Music Commands","`play, pause, resume, queue, skip, loop, setvol, search, clearqueue, np, leavemus`");
@@ -235,6 +235,16 @@ function prof (client, channel, args,msg) {
     }
     SDM.saveServerData(channel.guild.id, data);
 }
+function addAnnounce (client,channel,args,msg) {
+    if (isNaN(args[0])) {
+        channel.send("There needs to be a CHANNEL ID to actually sign up for an accouncement channel....");
+    } else if (!msg.member.hasPermission("ADMINISTRATOR")){
+        channel.send("You NEED TO BE AN ADMIN... HHAHAHA you noooooob")
+    } else {
+        SDM.achan("add",args[0]);
+        channel.send("Channel added to the Cordless announcements!!!")
+    }
+}
 function welcomeMessage(client, channel, args,msg) {
     if (!msg.member.hasPermission("ADMINISTRATOR")){
         channel.send("You do not have the permissions to run this command!");
@@ -373,6 +383,7 @@ commandsTable["fml"] = fml;
 commandsTable["info"] = info;
 commandsTable["setupreaction"] = setupreaction;
 commandsTable["clearreaction"] = clearReact;
+commandsTable["addanoun"] = addAnnounce;
 function rand(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
