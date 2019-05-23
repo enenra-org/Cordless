@@ -189,7 +189,7 @@ app.post('/announcement',(req,res) => {
     let text = buff.toString('ascii');
     if (text.split(":")[1] == privateConfig.announceToken) {
         console.log('yeeted');
-        res.json("authe?")
+        res.json("authe?");
         channels = SDM.achan("k","k");
         x = 0;
         while (x<channels.count) {
@@ -203,5 +203,5 @@ app.post('/announcement',(req,res) => {
 });
 client.login(privateConfig.token);
 app.listen(process.env.PORT || 3000,function() {
-    console.log('Cordless has started to listen on port 3000')
+    console.log('Cordless has started to listen on port 3000');
 });
