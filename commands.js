@@ -241,8 +241,31 @@ function addAnnounce (client,channel,args,msg) {
     } else if (!msg.member.hasPermission("ADMINISTRATOR")){
         channel.send("You NEED TO BE AN ADMIN... HHAHAHA you noooooob")
     } else {
-        SDM.achan("add",args[0]);
+        SDM.achan("add",args[0],channel.guild.id);
         channel.send("Channel added to the Cordless announcements!!!")
+    }
+}
+function delAnnounce (client,channel,args,msg) {
+    if (isNaN(args[0])) {
+        channel.send("There needs to be a CHANNEL ID to actually sign up for an accouncement channel....");
+    } else if (!msg.member.hasPermission("ADMINISTRATOR")){
+        channel.send("You NEED TO BE AN ADMIN... HHAHAHA you noooooob")
+    } else {
+        channels = SDM.achan(null,null,null);
+        console.log(channels)
+        console.log("FINDING");
+        var x =0 ;
+        while (x<channels.count) {
+            console.log(channels[String(x)]);
+            console.log(args[0],channel.guild.id)
+            if (channels[String(x)].channel == args[0] && channel.guild.id == channels[String(x)].guild) {
+                delete channels[String(x)]
+                console.log("DELETED");
+            }
+            x++;
+        }
+        SDM.achan("save",channels,null);
+        channel.send("Succesfully deleted the channel")
     }
 }
 function welcomeMessage(client, channel, args,msg) {
@@ -384,6 +407,7 @@ commandsTable["info"] = info;
 commandsTable["setupreaction"] = setupreaction;
 commandsTable["clearreaction"] = clearReact;
 commandsTable["addanoun"] = addAnnounce;
+commandsTable["delanoun"] = delAnnounce;
 function rand(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);

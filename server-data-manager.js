@@ -25,11 +25,18 @@ exports.readServerData = function (guildID) {
         }
     }
 }
-exports.achan = function (thing, channel) {
+exports.achan = function (type, channel,guild) {
     var data = require("./data/server-data.json");
-    if (thing == "add") {
-        data.announcementChannels[String(data.announcementChannels.count)] = channel;
+    if (type == "add") {
+        data.announcementChannels[String(data.announcementChannels.count)] = {"channel":channel,"guild":guild};
         data.announcementChannels.count++;
+        var json = JSON.stringify(data);
+        var fs = require("fs");
+        fs.writeFile("./data/server-data.json", json, "utf8", function (e) {
+            console.log(e);
+        });
+    } else if (type == "save") {
+        data.announcementChannels = channel;
         var json = JSON.stringify(data);
         var fs = require("fs");
         fs.writeFile("./data/server-data.json", json, "utf8", function (e) {

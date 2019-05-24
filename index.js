@@ -190,11 +190,15 @@ app.post('/announcement',(req,res) => {
     if (text.split(":")[1] == privateConfig.announceToken) {
         console.log('yeeted');
         res.json("authe?");
-        channels = SDM.achan("k","k");
+        channels = SDM.achan(null,null,null);
         x = 0;
         while (x<channels.count) {
             console.log(x);
-            client.channels.get(channels[String(x)]).send(req.body.msg);
+            try {
+            client.channels.get(channels[String(x)].channel).send(req.body.msg);
+            } catch {
+                console.log("skipping dat number")
+            }
             x++;
         }
     } else {
