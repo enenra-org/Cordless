@@ -57,8 +57,8 @@ client.on("raw", (packet) => {
     }
 });
 client.on('ready', () => {
-    console.log('Tecton bot on and connected');
-    client.user.setActivity('&help | cordless.tecton.tech | ' + String(client.guilds.size) + " servers", { type: 'PLAYING' })
+    console.log('Cordless on and connected');
+    client.user.setActivity('&help | cordless.enenra.org| ' + String(client.guilds.size) + " servers", { type: 'PLAYING' })
     try {
         client.channels.get(testChannel).send('Bot Operational');
     } catch {
