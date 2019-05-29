@@ -21,7 +21,8 @@ exports.readServerData = function (guildID) {
             "reactions": {
                 "counter": 0,
                 "enabled": false
-            }
+            },
+            "prefix":"&"
         }
     }
 }

@@ -58,7 +58,7 @@ client.on("raw", (packet) => {
 });
 client.on('ready', () => {
     console.log('Cordless on and connected');
-    client.user.setActivity('&help | cordless.enenra.org| ' + String(client.guilds.size) + " servers", { type: 'PLAYING' })
+    client.user.setActivity(String(client.guilds.size) + " servers | cordless.enenra.org", { type: 'PLAYING' })
     try {
         client.channels.get(testChannel).send('Bot Operational');
     } catch {
@@ -102,8 +102,9 @@ client.on('message', (msg) => {
     } else if (msg.content == "&meme") {
         thingy(client, msg);
     }
-    if (msg.content.startsWith("&")) {
-        messy = msg.content.slice(1);
+    console.log(data.prefix);
+    if (msg.content.startsWith(data.prefix)) {
+        messy = msg.content.slice(data.prefix.length);
         args = messy.split(" ");
         command = args.shift();
         command = command.toLowerCase();

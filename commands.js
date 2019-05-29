@@ -13,10 +13,12 @@ const privateConfig = require("./private_data/config.json");
 let parser = new Parser();
 const Discord = require('discord.js');
 const SDM = require('./server-data-manager');
+const axios = require('axios');
 commandsTable = {}; // Commands hash table
 
 // Color of discord bot
 function help(client, channel, args) {
+    data = SDM.readServerData(channel.guild.id);
     const embed = new Discord.RichEmbed();
     embed.setColor(2012);
     if (args[0] == "general") {
@@ -33,15 +35,15 @@ function help(client, channel, args) {
         embed.addField("Utility Commands","`clear, embed, welcome-message, welcome-setup, welcome-stop, leave-message, leave-setup, leave-stop`");
     }  else if (args[0] == "mem") {
         embed.setTitle("Cordless Meme Help");
-        embed.addField("Meme Commands","`startflow, stopflow, meme`");
-    } else {
+        embed.addField("Meme Commands","`startflow, stopflow, meme, xkcd`");
+    } else { 
         embed.setTitle("Cordless Help");
-        embed.setDescription("For a full set of commands and descriptions visit https://cordless.tecton.tech/documentation");
-        embed.addField("General", "For more info on general commands, try `&help general`");
-        embed.addField("Music", "For more info on music commands, try `&help music`");
-        embed.addField("Moderation", "For more info on moderation commands, try `&help mod`");
-        embed.addField("Utility", "For more info on utitlity commands, try `&help util`");
-        embed.addField("Memes", "For more info on meme commands, try `&help mem`");
+        embed.setDescription("For a full set of commands and descriptions visit https://cordless.tecton.tech/documentation \n \n Your prefix is **"+data.prefix+"**");
+        embed.addField("General", "For more info on general commands, try `"+data.prefix+"help general`");
+        embed.addField("Music", "For more info on music commands, try `"+data.prefix+"help music`");
+        embed.addField("Moderation", "For more info on moderation commands, try `"+data.prefix+"help mod`");
+        embed.addField("Utility", "For more info on utitlity commands, try `"+data.prefix+"help util`");
+        embed.addField("Memes", "For more info on meme commands, try `"+data.prefix+"help mem`");
     }
     channel.send({ embed });
 }
@@ -298,6 +300,29 @@ function delWelcome(client,channel,args,msg) {
     SDM.saveServerData(channel.guild.id, data);
     channel.send("Stopped welcomes!")
 }
+function xkcd(client,channel,args,msg) {
+    axios.get('https://xkcd.com/info.0.json')
+        .then(function (response) {
+            numMem = response.data.num
+            number = rand(1,numMem);
+            axios.get('https://xkcd.com/'+number+'/info.0.json')
+                .then(function (res) {
+                    const embed =  new Discord.RichEmbed()
+                        .setColor(0x96a8c8)
+                        .setTitle("A xkcd webcomic")
+                        .setDescription(res.data.title)
+                        .setImage(res.data.img)
+                        .setFooter("This webcomic was gotten from https://xkcd.com")
+                    channel.send(embed);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                })
+        })
+        .catch(function (error) {
+        console.log(error);
+        })
+}
 function leaveSetup(client, channel, args,msg) {
     if (!msg.member.hasPermission("ADMINISTRATOR")){
         channel.send("You do not have the permissions to run this command!");
@@ -314,6 +339,22 @@ function leaveSetup(client, channel, args,msg) {
     SDM.saveServerData(channel.guild.id, data);
     channel.send("Channel ID Set for leave message");
 };
+function prechange(client, channel, args,msg) {
+    console.log(args[0]);
+    console.log(typeof(args[0]))
+    if (!msg.member.hasPermission("ADMINISTRATOR")){
+        channel.send("You do not have the permissions to run this command!");
+        return;
+    }else if (typeof(args[0]) != "string") {
+        channel.send("Please input a text prefix to change it");
+        return;
+    }
+
+    data = SDM.readServerData(channel.guild.id);
+    data.prefix = args[0];
+    SDM.saveServerData(channel.guild.id, data);
+    channel.send("The prefix for this server is now "+ args[0]);
+}
 function leaveMessage(client, channel, args,msg) {
     if (!msg.member.hasPermission("ADMINISTRATOR")){
         channel.send("You do not have the permissions to run this command!");
@@ -408,6 +449,8 @@ commandsTable["setupreaction"] = setupreaction;
 commandsTable["clearreaction"] = clearReact;
 commandsTable["addanoun"] = addAnnounce;
 commandsTable["delanoun"] = delAnnounce;
+commandsTable["xkcd"] = xkcd;
+commandsTable["prechange"] = prechange;
 function rand(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
