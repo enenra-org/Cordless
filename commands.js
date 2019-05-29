@@ -1,12 +1,21 @@
-/* 
-    To add a command please copy the function template below titling it by the name of the function and then add the line:
-    commandsTable["commandname"] = functionName;
+/*
+Cordless Discord Bot
+
+For docs visit https://cordless.enenra.org
+
+Contributers:
+Neel Redkar
+Evan Nishi
+
+LICENSE: GNU Affero GPLv3
+To add a command please copy the function template below titling it by the name of the function and then add the line:
+commandsTable["commandname"] = functionName;
+
+to the bottom of this file. The command name must be ALL lowercase and must not contain spaces.
+Command function template:
+function help(client, channel, args) {
     
-    to the bottom of this file. The command name must be ALL lowercase and must not contain spaces.
-    Command function template:
-    function help(client, channel, args) {
-        
-    }
+}
 */
 let Parser = require('rss-parser');
 const privateConfig = require("./private_data/config.json");
@@ -38,7 +47,7 @@ function help(client, channel, args) {
         embed.addField("Meme Commands","`startflow, stopflow, meme, xkcd`");
     } else { 
         embed.setTitle("Cordless Help");
-        embed.setDescription("For a full set of commands and descriptions visit https://cordless.tecton.tech/documentation \n \n Your prefix is **"+data.prefix+"**");
+        embed.setDescription("For a full set of commands and descriptions visit https://cordless.enenra.org/documentation \n \n Your prefix is **"+data.prefix+"**");
         embed.addField("General", "For more info on general commands, try `"+data.prefix+"help general`");
         embed.addField("Music", "For more info on music commands, try `"+data.prefix+"help music`");
         embed.addField("Moderation", "For more info on moderation commands, try `"+data.prefix+"help mod`");
@@ -202,8 +211,8 @@ function info(client,channel,args,msg) {
     embed = new Discord.RichEmbed()
         .setTitle("Info")
         .setColor(0xEFFF00)
-        .setDescription("Hi! This is Cordless, a discord bot for all your needs! \n \n Find our discord server at https://discord.gg/sTCsbew and view my code at https://github.com/tecton-tech/discord-bot \n \n Thanks for using Cordless!!! :smile: :thumbsup:")
-        .setImage("https://cordless.tecton.tech/public/logo.png");
+        .setDescription("Hi! This is Cordless, a discord bot for all your needs! \n \n Find our discord server at https://discord.gg/sTCsbew and view my code at https://github.com/enenra-team-tech/discord-bot \n \n Thanks for using Cordless!!! :smile: :thumbsup:")
+        .setImage("https://cordless.enenra.org/public/logo.png");
         channel.send(embed);
 }
 //add welcome channel

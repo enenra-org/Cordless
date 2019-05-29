@@ -1,3 +1,14 @@
+/*
+Cordless Discord Bot
+
+For docs visit https://cordless.enenra.org
+
+Contributers:
+Neel Redkar
+Evan Nishi
+
+LICENSE: GNU Affero GPLv3
+*/
 const discord = require('discord.js');
 const privateConfig = require("./private_data/config.json");
 const commands = require("./commands");

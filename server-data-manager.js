@@ -1,3 +1,14 @@
+/*
+Cordless Discord Bot
+
+For docs visit https://cordless.enenra.org
+
+Contributers:
+Neel Redkar
+Evan Nishi
+
+LICENSE: GNU Affero GPLv3
+*/
 exports.readServerData = function (guildID) {
     var data = require("./data/server-data.json");
     if (data.hasOwnProperty(guildID)) {
