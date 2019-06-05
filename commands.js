@@ -18,7 +18,6 @@ function help(client, channel, args) {
 }
 */
 let Parser = require('rss-parser');
-const privateConfig = require("./private_data/config.json");
 let parser = new Parser();
 const Discord = require('discord.js');
 const SDM = require('./server-data-manager');
@@ -26,49 +25,52 @@ const axios = require('axios');
 commandsTable = {}; // Commands hash table
 
 // Color of discord bot
-function help(client, channel, args) {
-    data = SDM.readServerData(channel.guild.id);
+async function help(client, channel, args) {
+    data = await SDM.readServerData(channel.guild.id);
     const embed = new Discord.RichEmbed();
     embed.setColor(2012);
-    if (args[0] == "general") {
-        embed.setTitle("Cordless General Help");
-        embed.addField("General Commands","`help, pre-change, ping, addanoun`")
-    } else if (args[0] == "music") {
-        embed.setTitle("Cordless Music Help");
-        embed.addField("Music Commands","`play, pause, resume, queue, skip, loop, setvol, search, clearqueue, np, leavemus`");
-    } else if (args[0] == "mod") {
-        embed.setTitle("Cordless Moderation Help");
-        embed.addField("Moderation Commands","`mute, prof`");
-    } else if (args[0] == "util") {
-        embed.setTitle("Cordless Utility Help");
-        embed.addField("Utility Commands","`clear, embed, welcome-message, welcome-setup, welcome-stop, leave-message, leave-setup, leave-stop`");
-    }  else if (args[0] == "mem") {
-        embed.setTitle("Cordless Meme Help");
-        embed.addField("Meme Commands","`startflow, stopflow, meme, xkcd`");
-    } else { 
-        embed.setTitle("Cordless Help");
-        embed.setDescription("For a full set of commands and descriptions visit https://cordless.enenra.org/documentation \n \n Your prefix is **"+data.prefix+"**");
-        embed.addField("General", "For more info on general commands, try `"+data.prefix+"help general`");
-        embed.addField("Music", "For more info on music commands, try `"+data.prefix+"help music`");
-        embed.addField("Moderation", "For more info on moderation commands, try `"+data.prefix+"help mod`");
-        embed.addField("Utility", "For more info on utitlity commands, try `"+data.prefix+"help util`");
-        embed.addField("Memes", "For more info on meme commands, try `"+data.prefix+"help mem`");
+    switch(args[0]) {
+        case "general":
+            embed.setTitle("Cordless General Help");
+            embed.addField("General Commands","`help, prechange, ping, addanoun`");
+            break;
+        case "music":
+            embed.setTitle("Cordless Music Help");
+            embed.addField("Music Commands","`play, pause, resume, queue, skip, loop, setvol, search, clearqueue, np, leavemus`");
+            break;
+        case "mod":
+            embed.setTitle("Cordless Moderation Help");
+            embed.addField("Moderation Commands","`mute, prof`");
+            break;
+        case "util":
+            embed.setTitle("Cordless Utility Help");
+            embed.addField("Utility Commands","`clear, embed, welcome-message, welcome-setup, welcome-stop, leave-message, leave-setup, leave-stop`");
+            break;
+        case "mem":
+            embed.setTitle("Cordless Meme Help");
+            embed.addField("Meme Commands","`startflow, stopflow, meme, xkcd`");
+            break;
+        default:
+            embed.setTitle("Cordless Help");
+            embed.setDescription("For a full set of commands and descriptions visit https://cordless.enenra.org/documentation \n \n Your prefix is **"+data.prefix+"**");
+            embed.addField("General", "For more info on general commands, try `"+data.prefix+"help general`");
+            embed.addField("Music", "For more info on music commands, try `"+data.prefix+"help music`");
+            embed.addField("Moderation", "For more info on moderation commands, try `"+data.prefix+"help mod`");
+            embed.addField("Utility", "For more info on utitlity commands, try `"+data.prefix+"help util`");
+            embed.addField("Memes", "For more info on meme commands, try `"+data.prefix+"help mem`");
     }
     channel.send({ embed });
 }
-function clearchan(client, channel, args,msg) {
+async function clearchan(client, channel, args, msg) {
     //DEBBUGEING
-    async function clear() {
-        msg.delete();
-        var fetched = 1;
-        while (fetched.size > 0) {
-            fetched = await msg.channel.fetchMessages({limit: 99});
-            msg.channel.bulkDelete(fetched);
-        }
-        channel.send("Deleted all!!!");
-        msg.delete(3000);
+    msg.delete();
+    var fetched = 1;
+    while (fetched.size > 0) {
+        fetched = await msg.channel.fetchMessages({limit: 99});
+        msg.channel.bulkDelete(fetched);
     }
-    clear();
+    channel.send("Deleted all!!!");
+    msg.delete(3000);
 }
 
 function argPrint(client, channel, args) {
@@ -82,15 +84,13 @@ function ping(client, channel, args) {
     };
     channel.send({ embed });
 }
-function fml(client,channel,args) {
-    (async () => {
-        array = []
-        let feed = await parser.parseURL('https://www.fmylife.com/rss');
-        feed.items.forEach(item => {
-            array.push(item.content);
-          });
-        channel.send("**Warning! Possible NSFW content** ||"+array[rand(0,array.length)]+"||");
-      })();
+async function fml(client,channel,args) {
+    array = [];
+    let feed = await parser.parseURL('https://www.fmylife.com/rss');
+    feed.items.forEach(item => {
+        array.push(item.content);
+    });
+    channel.send("**Warning! Possible NSFW content** ||"+array[rand(0,array.length)]+"||");
 }
 function makeEmbed(client, channel, args,msg) {
     msg.delete(1000);
@@ -106,7 +106,7 @@ function makeEmbed(client, channel, args,msg) {
     }
     const embed = new Discord.RichEmbed();
     try {
-    embed.setColor(args[0]);
+        embed.setColor(args[0]);
     } catch {
         embed.setColor(0x000000);
     }
@@ -119,7 +119,7 @@ function makeEmbed(client, channel, args,msg) {
     embed.addField(args[0], args[1]);
     channel.send({ embed });
 }
-function setupreaction(client,channel,args,msg) {
+async function setupreaction(client, channel, args, msg) {
     if (!msg.member.hasPermission("ADMINISTRATOR")){
         channel.send("You do not have the permissions to run this command!");
         return;
@@ -137,17 +137,17 @@ function setupreaction(client,channel,args,msg) {
             .catch(console.log);
     }
     sendReact();
-    data = SDM.readServerData(channel.guild.id);
+    data = await SDM.readServerData(channel.guild.id);
     data.reactions[String(data.reactions.count)] = {};
     data.reactions[String(data.reactions.count)].messageID = args[1];
     data.reactions[String(data.reactions.count)].reaction = args[2];
     data.reactions[String(data.reactions.count)].roleID = args[3];
     data.reactions.enabled = true;
     data.reactions.count+=1;
-    SDM.saveServerData(channel.guild.id, data);
+    await SDM.saveServerData(channel.guild.id, data);
     channel.send("Set reaction message role! :thumbsup:");
 }
-function clearReact(client,channel,args,msg) {
+async function clearReact(client, channel, args, msg) {
     if (!msg.member.hasPermission("ADMINISTRATOR")){
         channel.send("You do not have the permissions to run this command!");
         return;
@@ -155,7 +155,7 @@ function clearReact(client,channel,args,msg) {
         channel.send("We need your message to be formatted `&clearreaction messageID`");
         return;
     }
-    data = SDM.readServerData(channel.guild.id);
+    data = await SDM.readServerData(channel.guild.id);
     count = 0;
     while (count < data.reactions.count) {
         console.log("while");
@@ -169,16 +169,16 @@ function clearReact(client,channel,args,msg) {
         }
         count+=1;
     }
-    SDM.saveServerData(channel.guild.id, data);
+    await SDM.saveServerData(channel.guild.id, data);
     channel.send("Reaction has been deleted!");
 }
 //creates mute role
-function mute(client, channel, args, msg) {
+async function mute(client, channel, args, msg) {
     if (!msg.member.hasPermission("ADMINISTRATOR")){
         channel.send("You do not have the permissions to run this command!");
         return;
     }
-    data = SDM.readServerData(channel.guild.id);
+    data = await SDM.readServerData(channel.guild.id);
     if (channel.guild.roles.find(val => val.name === "mute") != null) {
         console.log("role exists");
         msg.mentions.members.first().removeRoles(msg.mentions.members.first().roles).then(console.log).catch(console.error)
@@ -194,12 +194,12 @@ function mute(client, channel, args, msg) {
             permissions: ["READ_MESSAGE_HISTORY", "CONNECT"]
         });
         msg.mentions.members.first().addRole(channel.guild.roles.find(val => val.name === "mute"));
-        SDM.saveServerData(channel.guild.id, data);
+        await SDM.saveServerData(channel.guild.id, data);
     }
 
     if (data.mute.roleID = "") {
         data.mute.roleID = channel.guild.roles.find(val => val.name === "mute").id;
-        SDM.saveServerData(channel.guild.id, data);
+        await SDM.saveServerData(channel.guild.id, data);
     }
     if (msg.mentions.users.first() != null) {
         user = msg.mentions.users.first();
@@ -207,7 +207,7 @@ function mute(client, channel, args, msg) {
     }
 
 }
-function info(client,channel,args,msg) {
+function info(client, channel, args, msg) {
     embed = new Discord.RichEmbed()
         .setTitle("Info")
         .setColor(0xEFFF00)
@@ -216,7 +216,7 @@ function info(client,channel,args,msg) {
         channel.send(embed);
 }
 //add welcome channel
-function welcomeSetup(client, channel, args,msg) {
+async function welcomeSetup(client, channel, args,msg) {
     if (!msg.member.hasPermission("ADMINISTRATOR")){
         channel.send("You do not have the permissions to run this command!");
         return;
@@ -226,27 +226,27 @@ function welcomeSetup(client, channel, args,msg) {
         return;
     }
 
-    data = SDM.readServerData(channel.guild.id);
+    data = await SDM.readServerData(channel.guild.id);
     data.welcomeMessages.welcomeMessageEnabled = true;
     data.welcomeMessages.welcomeChannelID = args[0];
-    SDM.saveServerData(channel.guild.id, data);
+    await SDM.saveServerData(channel.guild.id, data);
     channel.send("Channel ID Set for welcome message");
 };
-function prof (client, channel, args,msg) {
+async function prof (client, channel, args, msg) {
     if (!msg.member.hasPermission("ADMINISTRATOR")){
         channel.send("You do not have the permissions to run this command!");
         return;
     }
-    data = SDM.readServerData(channel.guild.id);
+    data = await SDM.readServerData(channel.guild.id);
     data.profanity = !data.profanity;
     if (data.profanity == true) {
         channel.send("Profanity filter on! :thumbsup: ");
     } else {
         channel.send("Profanity filter off?!?!?! :rage:")
     }
-    SDM.saveServerData(channel.guild.id, data);
+    await SDM.saveServerData(channel.guild.id, data);
 }
-function addAnnounce (client,channel,args,msg) {
+function addAnnounce (client, channel, args, msg) {
     if (isNaN(args[0])) {
         channel.send("There needs to be a CHANNEL ID to actually sign up for an accouncement channel....");
     } else if (!msg.member.hasPermission("ADMINISTRATOR")){
@@ -256,13 +256,13 @@ function addAnnounce (client,channel,args,msg) {
         channel.send("Channel added to the Cordless announcements!!!")
     }
 }
-function delAnnounce (client,channel,args,msg) {
+function delAnnounce (client, channel, args, msg) {
     if (isNaN(args[0])) {
         channel.send("There needs to be a CHANNEL ID to actually sign up for an accouncement channel....");
     } else if (!msg.member.hasPermission("ADMINISTRATOR")){
         channel.send("You NEED TO BE AN ADMIN... HHAHAHA you noooooob")
     } else {
-        channels = SDM.achan(null,null,null);
+        channels = SDM.achan(null, null, null);
         console.log(channels)
         console.log("FINDING");
         var x =0 ;
@@ -279,12 +279,12 @@ function delAnnounce (client,channel,args,msg) {
         channel.send("Succesfully deleted the channel")
     }
 }
-function welcomeMessage(client, channel, args,msg) {
+async function welcomeMessage(client, channel, args, msg) {
     if (!msg.member.hasPermission("ADMINISTRATOR")){
         channel.send("You do not have the permissions to run this command!");
         return;
     }
-    data = SDM.readServerData(channel.guild.id);
+    data = await SDM.readServerData(channel.guild.id);
     if (data.welcomeMessages.welcomeMessageEnabled = false) {
         channel.send("You need to enter &welcome-setup first!!!");
     }
@@ -295,21 +295,21 @@ function welcomeMessage(client, channel, args,msg) {
         x++;
     }
     data.welcomeMessages.mess = message;
-    SDM.saveServerData(channel.guild.id, data);
+    await SDM.saveServerData(channel.guild.id, data);
     console.log(message);
     channel.send("Channel thingy Set for welcome message");
 };
-function delWelcome(client,channel,args,msg) {
+async function delWelcome(client, channel, args, msg) {
     if (!msg.member.hasPermission("ADMINISTRATOR")){
         channel.send("You do not have the permissions to run this command!");
         return;
     }
-    data = SDM.readServerData(channel.guild.id);
+    data = await SDM.readServerData(channel.guild.id);
     data.welcomeMessages.welcomeMessageEnabled = false;
-    SDM.saveServerData(channel.guild.id, data);
+    await SDM.saveServerData(channel.guild.id, data);
     channel.send("Stopped welcomes!")
 }
-function xkcd(client,channel,args,msg) {
+function xkcd(client, channel, args, msg) {
     axios.get('https://xkcd.com/info.0.json')
         .then(function (response) {
             numMem = response.data.num
@@ -332,7 +332,7 @@ function xkcd(client,channel,args,msg) {
         console.log(error);
         })
 }
-function leaveSetup(client, channel, args,msg) {
+async function leaveSetup(client, channel, args, msg) {
     if (!msg.member.hasPermission("ADMINISTRATOR")){
         channel.send("You do not have the permissions to run this command!");
         return;
@@ -342,13 +342,13 @@ function leaveSetup(client, channel, args,msg) {
         return;
     }
 
-    data = SDM.readServerData(channel.guild.id);
+    data = await SDM.readServerData(channel.guild.id);
     data.leaveMessages.leaveMessageEnabled = true;
     data.leaveMessages.leaveChannelID = args[0];
-    SDM.saveServerData(channel.guild.id, data);
+    await SDM.saveServerData(channel.guild.id, data);
     channel.send("Channel ID Set for leave message");
 };
-function prechange(client, channel, args,msg) {
+async function prechange(client, channel, args, msg) {
     console.log(args[0]);
     console.log(typeof(args[0]))
     if (!msg.member.hasPermission("ADMINISTRATOR")){
@@ -359,17 +359,17 @@ function prechange(client, channel, args,msg) {
         return;
     }
 
-    data = SDM.readServerData(channel.guild.id);
+    data = await SDM.readServerData(channel.guild.id);
     data.prefix = args[0];
-    SDM.saveServerData(channel.guild.id, data);
+    await SDM.saveServerData(channel.guild.id, data);
     channel.send("The prefix for this server is now "+ args[0]);
 }
-function leaveMessage(client, channel, args,msg) {
+async function leaveMessage(client, channel, args, msg) {
     if (!msg.member.hasPermission("ADMINISTRATOR")){
         channel.send("You do not have the permissions to run this command!");
         return;
     }
-    data = SDM.readServerData(channel.guild.id);
+    data = await SDM.readServerData(channel.guild.id);
     if (data.leaveMessages.leaveMessageEnabled = false) {
         channel.send("You need to enter &leave-setup first!!!");
     }
@@ -380,11 +380,11 @@ function leaveMessage(client, channel, args,msg) {
         x++;
     }
     data.leaveMessages.mess = message;
-    SDM.saveServerData(channel.guild.id, data);
+    await SDM.saveServerData(channel.guild.id, data);
     console.log(message);
     channel.send("Channel thingy Set for leave message");
 };
-function msgdel(client,channel,args,message) {
+function msgdel(client, channel, args, message) {
     if (!message.member.hasPermission("MANAGE_MESSAGES")){
         channel.send("You do not have the permissions to run this command!");
         return;
@@ -396,7 +396,7 @@ function msgdel(client,channel,args,message) {
     number = Number(args[0])+1;
     console.log(number);
     message.channel.bulkDelete(number).then(() => {
-        message.channel.send("**Deleted "+args[0]+" messages.**").then(msg => msg.delete(3000));
+        message.channel.send("**Deleted " + args[0] + " messages.**").then(msg => msg.delete(3000));
     }).catch(() => {
         channel.send("Max of 99 messages allowed!!!");
     });
@@ -404,14 +404,14 @@ function msgdel(client,channel,args,message) {
 function join() {
     
 }
-function delLeave(client,channel,args,msg) {
+async function delLeave(client, channel, args, msg) {
     if (!msg.member.hasPermission("ADMINISTRATOR")){
         channel.send("You do not have the permissions to run this command!");
         return;
     }
-    data = SDM.readServerData(channel.guild.id);
+    data = await SDM.readServerData(channel.guild.id);
     data.leaveMessages.leaveMessageEnabled = false;
-    SDM.saveServerData(channel.guild.id, data);
+    await SDM.saveServerData(channel.guild.id, data);
     channel.send("Stopped leaves!")
 }
 exports.runCommand = function runCommand(command, args, channel, client, msg) {
