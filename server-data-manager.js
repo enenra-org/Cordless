@@ -9,62 +9,60 @@ Evan Nishi
 
 LICENSE: GNU Affero GPLv3
 */
-exports.readServerData = function (guildID) {
-    var data = require("./data/server-data.json");
-    if (data.hasOwnProperty(guildID)) {
-        return data[guildID];
+
+var Guild = require("./database/models/Guild");
+
+exports.readServerData = async function (guildID) {
+    var guild = await Guild.findOne({ guildID }).exec();
+    if (guild) {
+        return guild;
     } else {
         return {
-            "welcomeMessages": {
-                "welcomeChannelID": "",
-                "welcomeMessageEnabled": false,
-                "mess": ""
+            guildID,
+            welcomeMessages: {
+                welcomeChannelID: "",
+                welcomeMessageEnabled: false,
+                mess: ""
             },
-            "leaveMessages": {
-                "leaveChannelID": "",
-                "leaveMessageEnabled": false,
-                "mess": ""
+            leaveMessages: {
+                leaveChannelID: "",
+                leaveMessageEnabled: false,
+                mess: ""
             },
-            "profanity": false,
-            "mute": {
-                "roleID": ""
+            profanity: false,
+            mute: {
+                roleID: ""
             },
-            "reactions": {
-                "counter": 0,
-                "enabled": false
+            reactions: {
+                counter: 0,
+                enabled: false
             },
-            "prefix":"&"
+            prefix: "&"
         }
     }
 }
-exports.achan = function (type, channel,guild) {
-    var data = require("./data/server-data.json");
+exports.achan = async function (type, channel, guild) {
+    var gguild = await Guild.findOne({ guildID }).exec();
     if (type == "add") {
-        data.announcementChannels[String(data.announcementChannels.count)] = {"channel":channel,"guild":guild};
-        data.announcementChannels.count++;
-        var json = JSON.stringify(data);
-        var fs = require("fs");
-        fs.writeFile("./data/server-data.json", json, "utf8", function (e) {
-            console.log(e);
-        });
+        gguild.announcementChannels.arr[guild.announcementChannels.count] = { channel, guild };
+        gguild.announcementChannels.count++;
+        gguild.save((err, guild) => {});
     } else if (type == "save") {
-        data.announcementChannels = channel;
-        var json = JSON.stringify(data);
-        var fs = require("fs");
-        fs.writeFile("./data/server-data.json", json, "utf8", function (e) {
-            console.log(e);
-        });
+        gguild.announcementChannels.arr = channel;
+        gguild.save((err, guild) => {});
     } else {
         return data.announcementChannels;
     }
 }
-exports.saveServerData = function (guildID, newData) {
-    var data = require("./data/server-data.json");
-    data[guildID] = newData;
-    console.log("Here")
-    var json = JSON.stringify(data);
-    var fs = require("fs");
-    fs.writeFile("./data/server-data.json", json, "utf8", function (e) {
-        console.log(e);
-    });
+exports.saveServerData = async function (guildID, newData) {
+    var guild = await Guild.findOne({ guildID }).exec();
+    if(!guild) guild = new Guild();
+    guild.guildID = newData.guildID;
+    guild.welcomeMessages = newData.welcomeMessages;
+    guild.leaveMessages = newData.leaveMessages;
+    guild.profanity = newData.profanity;
+    guild.mute = newData.mute;
+    guild.reactions = newData.reactions;
+    guild.prefix = newData.prefix;
+    await guild.save((err, guild) => {});
 }
