@@ -11,6 +11,7 @@ LICENSE: GNU Affero GPLv3
 */
 
 var Guild = require("./database/models/Guild");
+var Currency = require("./database/models/Currency");
 
 exports.readServerData = async function (guildID) {
     var guild = await Guild.findOne({ guildID }).exec();
@@ -53,6 +54,24 @@ exports.achan = async function (type, channel, guild) {
     } else {
         return data.announcementChannels;
     }
+}
+exports.readUser = async function (PID) {
+    var data = await Currency.findOne({ PID }).exec();
+    if (data) {
+        return data;
+    } else {
+        return {
+            PID,
+            money:0
+        }
+    }
+}
+exports.writeUser = async function (PID,newDat) {
+    var data = await Currency.findOne({ PID }).exec();
+    if(!data) data = new Currency();
+    data.PID = PID;
+    data.money = newDat.money;
+    await data.save((err,guild) => {});
 }
 exports.saveServerData = async function (guildID, newData) {
     var guild = await Guild.findOne({ guildID }).exec();

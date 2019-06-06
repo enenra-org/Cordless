@@ -414,6 +414,17 @@ async function delLeave(client, channel, args, msg) {
     await SDM.saveServerData(channel.guild.id, data);
     channel.send("Stopped leaves!")
 }
+async function addMun (client,channel, args,msg) {
+    console.log(msg.author.id);
+    data = await SDM.readUser(msg.author.id);
+    data.money += 1;
+    await SDM.writeUser(msg.author.id,data);
+    await channel.send(`Your balance has been added, it is now ${data.money}`);
+}
+async function bal (client,channel, args,msg) {
+    data = await SDM.readUser(msg.author.id);
+    channel.send(`Your  balance is ${data.money}`)
+}
 exports.runCommand = function runCommand(command, args, channel, client, msg) {
     if (commandsTable.hasOwnProperty(command)) {
         commandsTable[command](client, channel, args, msg);
@@ -460,6 +471,8 @@ commandsTable["addanoun"] = addAnnounce;
 commandsTable["delanoun"] = delAnnounce;
 commandsTable["xkcd"] = xkcd;
 commandsTable["prechange"] = prechange;
+commandsTable["bal"] = bal;
+commandsTable["addmuns"] = addMun;
 function rand(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
