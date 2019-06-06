@@ -25,7 +25,7 @@ const testChannel = "575022379756027904";
 const client = new discord.Client();
 const mongoose = require("mongoose");
 
-mongoose.connect("mongodb://localhost/cordless", {useNewUrlParser: true});
+mongoose.connect(privateConfig.mongoURL, {useNewUrlParser: true});
 
 rip = false;
 const music = new Music(client, {
