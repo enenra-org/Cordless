@@ -414,16 +414,19 @@ async function delLeave(client, channel, args, msg) {
     await SDM.saveServerData(channel.guild.id, data);
     channel.send("Stopped leaves!")
 }
+
+//Currency Commands
 async function addMun (client,channel, args,msg) {
     console.log(msg.author.id);
     data = await SDM.readUser(msg.author.id);
-    data.money += 1;
+    data.money += rand(0,70);
+
     await SDM.writeUser(msg.author.id,data);
-    await channel.send(`Your balance has been added, it is now ${data.money}`);
+    await channel.send(`Stop begging you brat! I'll only give you ${data.money} coins!`);
 }
 async function bal (client,channel, args,msg) {
     data = await SDM.readUser(msg.author.id);
-    channel.send(`Your  balance is ${data.money}`)
+    channel.send(`Your balance is ${data.money} coins`)
 }
 exports.runCommand = function runCommand(command, args, channel, client, msg) {
     if (commandsTable.hasOwnProperty(command)) {
@@ -472,7 +475,7 @@ commandsTable["delanoun"] = delAnnounce;
 commandsTable["xkcd"] = xkcd;
 commandsTable["prechange"] = prechange;
 commandsTable["bal"] = bal;
-commandsTable["addmuns"] = addMun;
+commandsTable["beg"] = addMun;
 function rand(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
