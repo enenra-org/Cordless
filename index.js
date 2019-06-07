@@ -31,7 +31,6 @@ const music = new Music(client, {
     youtubeKey: privateConfig.youtube,
     prefix: "&",
     maxQueueSize: 9999,
-    djRole: "DJ",
     anyoneCanSkip: true,
     helpCmd: "helpmusic",
     loopCmd: "loop",

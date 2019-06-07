@@ -72,15 +72,23 @@ exports.readUser = async function (PID) {
     } else {
         return {
             PID,
-            money:0
+            money:0,
+            times: {
+                begtime:""
+            }
         }
     }
 }
 exports.writeUser = async function (PID,newDat) {
     var data = await Currency.findOne({ PID }).exec();
-    if(!data) data = new Currency();
-    data.PID = PID;
-    data.money = newDat.money;
+    if(!data) { 
+        data = new Currency();
+        data.PID = PID;
+        data.money = newDat.money;
+        data.times.begtime = newDat.times.begtime
+    } else {
+        data = newDat
+    }
     await data.save((err,guild) => {});
 }
 exports.saveServerData = async function (guildID, newData) {

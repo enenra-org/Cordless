@@ -24,6 +24,7 @@ const SDM = require('./server-data-manager');
 const axios = require('axios');
 commandsTable = {}; // Commands hash table
 var Guild = require("./database/models/Guild");
+var moment = require('moment');
 // Color of discord bot
 async function help(client, channel, args) {
     data = await SDM.readServerData(channel.guild.id);
@@ -429,10 +430,17 @@ async function delLeave(client, channel, args, msg) {
 
 //Currency Commands
 async function addMun(client, channel, args, msg) {
-    console.log(msg.author.id);
     data = await SDM.readUser(msg.author.id);
+    var curr = moment(data.times.begtime)
+    console.log(curr.diff(moment(),"seconds"));
+    if (curr.diff(moment(),"seconds") > -60 ) {
+        channel.send(`Too fast, you dirty begger. Wait ${60-(0 - curr.diff(moment(),"seconds"))} more seconds.`)
+        return;
+    }
     added = rand(0, 70)
     data.money += added;
+    data.times.begtime = moment();
+    console.log(data);
     await SDM.writeUser(msg.author.id, data);
     await channel.send(`Stop begging you brat! I'll only give you ${added} coins!`);
 }
