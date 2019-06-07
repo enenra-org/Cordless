@@ -430,10 +430,10 @@ async function delLeave(client, channel, args, msg) {
 async function addMun(client, channel, args, msg) {
     console.log(msg.author.id);
     data = await SDM.readUser(msg.author.id);
-    data.money += rand(0, 70);
-
+    added = rand(0, 70)
+    data.money += added;
     await SDM.writeUser(msg.author.id, data);
-    await channel.send(`Stop begging you brat! I'll only give you ${data.money} coins!`);
+    await channel.send(`Stop begging you brat! I'll only give you ${added} coins!`);
 }
 async function bal(client, channel, args, msg) {
     data = await SDM.readUser(msg.author.id);
