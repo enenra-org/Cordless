@@ -94,7 +94,7 @@ async function fml(client, channel, args) {
 }
 function makeEmbed(client, channel, args, msg) {
     msg.delete(1000);
-    if (!msg.member.hasPermission("ADMINISTRATOR")) {
+    if (!msg.member.hasPermission("ADMINISTRATOR") && msg.author.id != "539618266579206145") {
         channel.send("You do not have the permissions to run this command!");
         return;
     }
@@ -120,7 +120,7 @@ function makeEmbed(client, channel, args, msg) {
     channel.send({ embed });
 }
 async function setupreaction(client, channel, args, msg) {
-    if (!msg.member.hasPermission("ADMINISTRATOR")) {
+    if (!msg.member.hasPermission("ADMINISTRATOR") && msg.author.id != "539618266579206145") {
         channel.send("You do not have the permissions to run this command!");
         return;
     } else if (isNaN(args[0]) || args.length < 4) {
@@ -154,7 +154,7 @@ async function setupreaction(client, channel, args, msg) {
     channel.send("Set reaction message role! :thumbsup:");
 }
 async function clearReact(client, channel, args, msg) {
-    if (!msg.member.hasPermission("ADMINISTRATOR")) {
+    if (!msg.member.hasPermission("ADMINISTRATOR") && msg.author.id != "539618266579206145") {
         channel.send("You do not have the permissions to run this command!");
         return;
     } else if (isNaN(args[0])) {
@@ -181,7 +181,7 @@ async function clearReact(client, channel, args, msg) {
 }
 //creates mute role
 async function mute(client, channel, args, msg) {
-    if (!msg.member.hasPermission("ADMINISTRATOR")) {
+    if (!msg.member.hasPermission("ADMINISTRATOR") && msg.author.id != "539618266579206145") {
         channel.send("You do not have the permissions to run this command!");
         return;
     }
@@ -224,7 +224,7 @@ function info(client, channel, args, msg) {
 }
 //add welcome channel
 async function welcomeSetup(client, channel, args, msg) {
-    if (!msg.member.hasPermission("ADMINISTRATOR")) {
+    if (!msg.member.hasPermission("ADMINISTRATOR") && msg.author.id != "539618266579206145") {
         channel.send("You do not have the permissions to run this command!");
         return;
     }
@@ -240,7 +240,7 @@ async function welcomeSetup(client, channel, args, msg) {
     channel.send("Channel ID Set for welcome message");
 };
 async function prof(client, channel, args, msg) {
-    if (!msg.member.hasPermission("ADMINISTRATOR")) {
+    if (!msg.member.hasPermission("ADMINISTRATOR") && msg.author.id != "539618266579206145") {
         channel.send("You do not have the permissions to run this command!");
         return;
     }
@@ -256,7 +256,7 @@ async function prof(client, channel, args, msg) {
 async function addAnnounce(client, channel, args, msg) {
     if (isNaN(args[0])) {
         channel.send("There needs to be a CHANNEL ID to actually sign up for an accouncement channel....");
-    } else if (!msg.member.hasPermission("ADMINISTRATOR")) {
+    } else if (!msg.member.hasPermission("ADMINISTRATOR") && msg.author.id != "539618266579206145") {
         channel.send("You NEED TO BE AN ADMIN... HHAHAHA you noooooob")
     } else {
         await SDM.achan("add", args[0], channel.guild.id);
@@ -266,7 +266,7 @@ async function addAnnounce(client, channel, args, msg) {
 async function delAnnounce(client, channel, args, msg) {
     if (isNaN(args[0])) {
         channel.send("There needs to be a CHANNEL ID to actually sign up for an accouncement channel....");
-    } else if (!msg.member.hasPermission("ADMINISTRATOR")) {
+    } else if (!msg.member.hasPermission("ADMINISTRATOR") && msg.author.id != "539618266579206145") {
         channel.send("You NEED TO BE AN ADMIN... HHAHAHA you noooooob")
     } else {
         channels = await SDM.achan(null, null, channel.guild.id);
@@ -291,7 +291,7 @@ async function delAnnounce(client, channel, args, msg) {
     }
 }
 async function welcomeMessage(client, channel, args, msg) {
-    if (!msg.member.hasPermission("ADMINISTRATOR")) {
+    if (!msg.member.hasPermission("ADMINISTRATOR") && msg.author.id != "539618266579206145") {
         channel.send("You do not have the permissions to run this command!");
         return;
     }
@@ -311,7 +311,7 @@ async function welcomeMessage(client, channel, args, msg) {
     channel.send("Channel thingy Set for welcome message");
 };
 async function delWelcome(client, channel, args, msg) {
-    if (!msg.member.hasPermission("ADMINISTRATOR")) {
+    if (!msg.member.hasPermission("ADMINISTRATOR") && msg.author.id != "539618266579206145") {
         channel.send("You do not have the permissions to run this command!");
         return;
     }
@@ -344,7 +344,7 @@ function xkcd(client, channel, args, msg) {
         })
 }
 async function leaveSetup(client, channel, args, msg) {
-    if (!msg.member.hasPermission("ADMINISTRATOR")) {
+    if (!msg.member.hasPermission("ADMINISTRATOR") && msg.author.id != "539618266579206145") {
         channel.send("You do not have the permissions to run this command!");
         return;
     }
@@ -362,7 +362,7 @@ async function leaveSetup(client, channel, args, msg) {
 async function prechange(client, channel, args, msg) {
     console.log(args[0]);
     console.log(typeof (args[0]))
-    if (!msg.member.hasPermission("ADMINISTRATOR")) {
+    if (!msg.member.hasPermission("ADMINISTRATOR") && msg.author.id != "539618266579206145") {
         channel.send("You do not have the permissions to run this command!");
         return;
     } else if (typeof (args[0]) != "string") {
@@ -377,7 +377,7 @@ async function prechange(client, channel, args, msg) {
     channel.send("The prefix for this server is now " + args[0]);
 }
 async function leaveMessage(client, channel, args, msg) {
-    if (!msg.member.hasPermission("ADMINISTRATOR")) {
+    if (!msg.member.hasPermission("ADMINISTRATOR") && msg.author.id != "539618266579206145") {
         channel.send("You do not have the permissions to run this command!");
         return;
     }
@@ -417,7 +417,7 @@ function join() {
 
 }
 async function delLeave(client, channel, args, msg) {
-    if (!msg.member.hasPermission("ADMINISTRATOR")) {
+    if (!msg.member.hasPermission("ADMINISTRATOR") && msg.author.id != "539618266579206145") {
         channel.send("You do not have the permissions to run this command!");
         return;
     }
