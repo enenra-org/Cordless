@@ -10,7 +10,7 @@ Evan Nishi
 LICENSE: GNU Affero GPLv3
 */
 const discord = require('discord.js');
-const privateConfig = require("./private_data/config.json");
+require('dotenv').config()
 const commands = require("./commands");
 const snekfetch = require('snekfetch');
 const SDM = require('./server-data-manager');
@@ -24,11 +24,11 @@ const badwords = ["4r5e", "5h1t", "5hit", "a55", "anal", "anus", "ar5e", "arrse"
 const testChannel = "575022379756027904";
 const client = new discord.Client();
 const mongoose = require("mongoose");
-mongoose.connect(privateConfig.mongoURL, {useNewUrlParser: true});
+mongoose.connect(process.env.MONGO, {useNewUrlParser: true});
 var Guild = require("./database/models/Guild");
 rip = false;
 const music = new Music(client, {
-    youtubeKey: privateConfig.youtube,
+    youtubeKey: process.env.YTTOKEN,
     prefix: "&",
     maxQueueSize: 9999,
     anyoneCanSkip: true,
@@ -201,7 +201,7 @@ function rand(min, max) {
 app.post('/announcement', async (req, res) => {
     let buff = Buffer.from(req.headers.authorization.split(" ")[1], 'base64');  
     let text = buff.toString('ascii');
-    if (text.split(":")[1] == privateConfig.announceToken) {
+    if (text.split(":")[1] == process.env.ANNOUNCE) {
         console.log('yeeted');
         res.json("authe?");
         data = await SDM.readServerData("all")
@@ -221,7 +221,7 @@ app.post('/announcement', async (req, res) => {
         res.json("NON AUTHE??>!??!?!?");
     }
 });
-client.login(privateConfig.token);
+client.login(process.env.TOKEN);
 app.listen(process.env.PORT || 3000, () => {
     console.log('Cordless has started to listen on port 3000');
 });

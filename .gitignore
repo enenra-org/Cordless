@@ -1,4 +1,4 @@
 node_modules/
-private_data/config.json
+.env
 .vscode/
 data/server-data.json
