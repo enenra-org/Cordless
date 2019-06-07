@@ -17,8 +17,9 @@ var Guild = new mongoose.Schema({
         roleID: String
     },
     reactions: {
-        counter: Number,
-        enabled: Boolean
+        count: Number,
+        enabled: Boolean,
+        message: Array
     },
     announcementChannels: {
         count: Number,

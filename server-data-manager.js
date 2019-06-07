@@ -14,6 +14,9 @@ var Guild = require("./database/models/Guild");
 var Currency = require("./database/models/Currency");
 
 exports.readServerData = async function (guildID) {
+    if (guildID == "all") {
+        return await Guild.find({}).exec()
+    }
     var guild = await Guild.findOne({ guildID }).exec();
     if (guild) {
         return guild;
@@ -29,30 +32,37 @@ exports.readServerData = async function (guildID) {
                 leaveChannelID: "",
                 leaveMessageEnabled: false,
                 mess: ""
+            }, announcementChannels: {
+                count:0,
+                arr:[]
             },
             profanity: false,
             mute: {
                 roleID: ""
             },
             reactions: {
-                counter: 0,
-                enabled: false
+                count: 0,
+                enabled: false,
+                message: []
             },
             prefix: "&"
         }
     }
 }
-exports.achan = async function (type, channel, guild) {
+exports.achan = async function (type, channel, guildID) {
     var gguild = await Guild.findOne({ guildID }).exec();
+    console.log(gguild + "HI THERE");
     if (type == "add") {
-        gguild.announcementChannels.arr[guild.announcementChannels.count] = { channel, guild };
+        console.log(gguild);
+        gguild.announcementChannels.arr.push({ channel, guildID });
         gguild.announcementChannels.count++;
-        gguild.save((err, guild) => {});
+        console.log(gguild);
+        gguild.save((err, guildID) => {});
     } else if (type == "save") {
-        gguild.announcementChannels.arr = channel;
+        gguild.announcementChannels = channel;
         gguild.save((err, guild) => {});
     } else {
-        return data.announcementChannels;
+        return gguild.announcementChannels;
     }
 }
 exports.readUser = async function (PID) {

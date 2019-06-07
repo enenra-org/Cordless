@@ -24,9 +24,8 @@ const badwords = ["4r5e", "5h1t", "5hit", "a55", "anal", "anus", "ar5e", "arrse"
 const testChannel = "575022379756027904";
 const client = new discord.Client();
 const mongoose = require("mongoose");
-
 mongoose.connect(privateConfig.mongoURL, {useNewUrlParser: true});
-
+var Guild = require("./database/models/Guild");
 rip = false;
 const music = new Music(client, {
     youtubeKey: privateConfig.youtube,
@@ -59,10 +58,10 @@ client.on("raw", async packet => {
     while (count < data.reactions.count && data.reactions.enabled) {
         console.log("IN TH EWHILE LOOP");
         try {
-        if (packet.d.emoji.name == data.reactions[String(count)].reaction && packet.d.message_id == data.reactions[String(count)].messageID) {
+        if (packet.d.emoji.name == data.reactions.message[count].reaction && packet.d.message_id == data.reactions.message[count].messageID) {
             console.log("MOOP TRIGGERED");
-            console.log(String(data.reactions[String(count)].roleID));
-            client.guilds.get(packet.d.guild_id).members.get(packet.d.user_id).addRole(data.reactions[String(count)].roleID)
+            console.log(String(data.reactions.message[count].roleID));
+            client.guilds.get(packet.d.guild_id).members.get(packet.d.user_id).addRole(data.reactions.message[count].roleID)
                 .then(console.log)
                 .catch(console.log);
         };
@@ -206,14 +205,16 @@ app.post('/announcement', async (req, res) => {
     if (text.split(":")[1] == privateConfig.announceToken) {
         console.log('yeeted');
         res.json("authe?");
-        channels = await SDM.achan(null,null,null);
-        x = 0;
-        while (x<channels.count) {
-            console.log(x);
-            try {
-            client.channels.get(channels[String(x)].channel).send(req.body.msg);
-            } catch {
-                console.log("skipping dat number")
+        data = await SDM.readServerData("all")
+        x = 0
+        while (x < data.length) {
+            y = 0
+            console.log(x)
+            console.log(data[x].announcementChannels.arr);
+            while (y < data[x].announcementChannels.arr.length) {
+                console.log(data[x].announcementChannels.arr[y].channel);
+                client.channels.get(data[x].announcementChannels.arr[y].channel).send(req.body.msg);
+                y++;
             }
             x++;
         }
