@@ -372,6 +372,7 @@ async function prechange(client, channel, args, msg) {
 
     data = await SDM.readServerData(channel.guild.id);
     data.prefix = args[0];
+    data.prefix = data.prefix.replace("{space}"," ")
     await SDM.saveServerData(channel.guild.id, data);
     channel.send("The prefix for this server is now " + args[0]);
 }
