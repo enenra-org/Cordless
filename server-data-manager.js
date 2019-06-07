@@ -86,8 +86,7 @@ exports.writeUser = async function (PID,newDat) {
         data = new Currency();
         data.PID = PID;
         data.money = newDat.money;
-        data.times.begtime = newDat.times.begtime
-        data.times.bettime = newDat.times.bettime
+        data.times = newDat.times
     } else {
         data = newDat
     }

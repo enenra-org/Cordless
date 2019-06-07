@@ -221,6 +221,9 @@ app.post('/announcement', async (req, res) => {
         res.json("NON AUTHE??>!??!?!?");
     }
 });
+app.get("/", async (req,res) => {
+    res.send("I have been kept alive!")
+})
 client.login(process.env.TOKEN);
 app.listen(process.env.PORT || 3000, () => {
     console.log('Cordless has started to listen on port 3000');
