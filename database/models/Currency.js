@@ -4,7 +4,8 @@ var Currency = new mongoose.Schema({
     PID: String,
     money:Number,
     times: {
-        begtime:Date
+        begtime:Date,
+        bettime:Date
     }
 });
 

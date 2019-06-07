@@ -74,7 +74,8 @@ exports.readUser = async function (PID) {
             PID,
             money:0,
             times: {
-                begtime:""
+                begtime:"",
+                bettime:""
             }
         }
     }
@@ -86,6 +87,7 @@ exports.writeUser = async function (PID,newDat) {
         data.PID = PID;
         data.money = newDat.money;
         data.times.begtime = newDat.times.begtime
+        data.times.bettime = newDat.times.bettime
     } else {
         data = newDat
     }

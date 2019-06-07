@@ -444,6 +444,46 @@ async function addMun(client, channel, args, msg) {
     await SDM.writeUser(msg.author.id, data);
     await channel.send(`Stop begging you brat! I'll only give you ${added} coins!`);
 }
+async function gamble(client, channel, args, msg) {
+    if (isNaN(args[0])) {
+        channel.send("You need to enter a number to bet....");
+        return;
+    }
+    betAmount = Math.round(Number(args[0]));
+    if (isNaN(betAmount)) {
+        channel.send("Enter a NUMBER! Are you trying to break me?????");
+        return;
+    }
+    data = await SDM.readUser(msg.author.id);
+    var curr = moment(data.times.bettime)
+    console.log(curr.diff(moment(),"seconds"));
+    if (curr.diff(moment(),"seconds") > -10 ) {
+        channel.send(`Too fast, you gambler! Wait ${10-(0 - curr.diff(moment(),"seconds"))} more seconds.`)
+        return;
+    }else if (betAmount > data.money) {
+        channel.send("You need to bet an amount of money that you have......");
+        return;
+    }
+    multiplier = rand(0, 2);
+    if (multiplier == 0) {
+        data.money+=Math.round(Number(betAmount*0.5));
+        const embed = new Discord.RichEmbed()
+            .setTitle("Gambling Results!")
+            .setDescription(`You have won ${Math.round(Number(betAmount*0.5))} more coins! Your new balance is ${data.money}!`)
+            .setColor(0x13a532)
+        channel.send(embed);
+    } else {
+        data.money-=betAmount;
+        const embed = new Discord.RichEmbed()
+            .setTitle("Gambling Results!")
+            .setDescription(`You have LOST ${betAmount} coins! Your new balance is ${data.money}!`)
+            .setColor(0xec1b1b)
+        channel.send(embed);
+    }
+    data.times.bettime = moment();
+    console.log(data);
+    await SDM.writeUser(msg.author.id, data);
+}
 async function bal(client, channel, args, msg) {
     data = await SDM.readUser(msg.author.id);
     channel.send(`Your balance is ${data.money} coins`)
@@ -496,6 +536,7 @@ commandsTable["xkcd"] = xkcd;
 commandsTable["prechange"] = prechange;
 commandsTable["bal"] = bal;
 commandsTable["beg"] = addMun;
+commandsTable["bet"] = gamble;
 function rand(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
