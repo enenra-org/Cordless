@@ -445,10 +445,6 @@ async function addMun(client, channel, args, msg) {
     await channel.send(`Stop begging you brat! I'll only give you ${added} coins!`);
 }
 async function gamble(client, channel, args, msg) {
-    if (isNaN(args[0])) {
-        channel.send("You need to enter a number to bet....");
-        return;
-    }
     betAmount = Math.round(Number(args[0]));
     if (isNaN(betAmount) && args[0] != "all") {
         channel.send("Enter a NUMBER! Are you trying to break me?????");
