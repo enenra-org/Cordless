@@ -450,11 +450,14 @@ async function gamble(client, channel, args, msg) {
         return;
     }
     betAmount = Math.round(Number(args[0]));
-    if (isNaN(betAmount)) {
+    if (isNaN(betAmount) && args[0] != "all") {
         channel.send("Enter a NUMBER! Are you trying to break me?????");
         return;
     }
     data = await SDM.readUser(msg.author.id);
+    if (args[0] == "all") {
+        betAmount = data.money;
+    }
     var curr = moment(data.times.bettime)
     console.log(curr.diff(moment(),"seconds"));
     if (curr.diff(moment(),"seconds") > -10 ) {
