@@ -13,7 +13,7 @@ const { YTSearcher } = require('ytsearcher');
 const ypi = require('youtube-playlist-info');
 const Discord = require('discord.js');
 const PACKAGE = require('./package.json');
-
+const SDM = require("./server-data-manager");
 /**
  * Takes a discord.js client and turns it into a music bot.
  * Extra thanks to Rodabaugh (Erik) for helping with some tweaks and ideas.
@@ -705,44 +705,11 @@ module.exports = function(client, options) {
   });
 
   // Catch message events.
-  client.on('message', msg => {
+  client.on('message', async msg => {
     const message = msg.content.trim();
-
-    if (musicbot.advancedMode.enabled && musicbot.advancedMode.multiPrefix) {
-      if (musicbot.botPrefixs.has(msg.guild.id)) {
-        // Get the custom prefix.
-        const prefix = musicbot.botPrefixs.get(msg.guild.id).prefix;
-        if (!message.startsWith(prefix)) return;
-
-        // Get the command, suffix.
-        const command = message.substring(prefix.toString().length).split(/[ \n]/)[0].trim();
-        const suffix = message.substring(prefix.toString().length + command.length).trim();
-        const args = message.slice(prefix.toString().length + command.length).trim().split(/ +/g);
-
-        // Process the commands.
-        if (musicbot.commands.has(command)) {
-          let tCmd = musicbot.commands.get(command);
-          if (!tCmd.disabled) return musicbot[tCmd.run](msg, suffix, args);
-        } else if (musicbot.aliases.has(command)) {
-          let aCmd = musicbot.commands.get(command);
-          if (!aCmd.disabled) return musicbot[aCmd.run](msg, suffix, args);
-        };
-      } else if (message.startsWith(musicbot.botPrefix)) {
-        // Get the command, suffix.
-        const command = message.substring(musicbot.botPrefix.length).split(/[ \n]/)[0].trim();
-        const suffix = message.substring(musicbot.botPrefix.length + command.length).trim();
-        const args = message.slice(musicbot.botPrefix.length + command.length).trim().split(/ +/g);
-
-        // Process the commands.
-        if (musicbot.commands.has(command)) {
-          let tCmd = musicbot.commands.get(command);
-          if (!tCmd.disabled) return musicbot[tCmd.run](msg, suffix, args);
-        } else if (musicbot.aliases.has(command)) {
-          let aCmd = musicbot.commands.get(command);
-          if (!aCmd.disabled) return musicbot[aCmd.run](msg, suffix, args);
-        };
-      };
-    } else if (message.startsWith(musicbot.botPrefix)) {
+    data =  await SDM.readServerData(msg.member.guild.id);
+    musicbot.botPrefix = data.prefix;
+    if (message.startsWith(musicbot.botPrefix)) {
       // Get the command, suffix.
       const command = message.substring(musicbot.botPrefix.length).split(/[ \n]/)[0].trim();
       const suffix = message.substring(musicbot.botPrefix.length + command.length).trim();
