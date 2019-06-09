@@ -32,7 +32,6 @@ function Logger() {
         return Logger.prototype._instance;
     } else {
         const time = moment().format("M_DD_YYYY_hh-mm-ss");
-        console.log(time);
         winston.addColors(cordlessLevels.colors);
         const logger = winston.createLogger({
             level: envDevelopment ? "neel" : "info",
