@@ -5,6 +5,7 @@
 const envDevelopment = process.env.NODE_ENV === "development";
 
 const winston = require("winston");
+const moment = require("moment");
 const { combine, timestamp, label, printf } = winston.format;
 const cordlessFormat = printf(({level, message, label, timestamp}) => {
     return `${timestamp} [${label}] ${level}: ${message}`;
@@ -30,6 +31,8 @@ function Logger() {
     if(Logger.prototype._instance) {
         return Logger.prototype._instance;
     } else {
+        const time = moment().format("M_DD_YYYY_hh-mm-ss");
+        console.log(time);
         winston.addColors(cordlessLevels.colors);
         const logger = winston.createLogger({
             level: envDevelopment ? "neel" : "info",
@@ -41,7 +44,7 @@ function Logger() {
                 cordlessFormat
             ),
             transports: [
-                new winston.transports.File({ filename: "logs/cordless.log", options: { flags: "w" } })
+                new winston.transports.File({ filename: `logs/cordless-${time}.log` })
             ]
         });
         if (envDevelopment) {
