@@ -375,7 +375,7 @@ async function prechange(client, channel, args, msg) {
     data.prefix = args[0];
     data.prefix = data.prefix.replace("{space}"," ")
     await SDM.saveServerData(channel.guild.id, data);
-    channel.send("The prefix for this server is now " + args[0]);
+    channel.send("@everyone The prefix for this server is now `" + args[0].replace("{space}"," ")+"`");
 }
 async function leaveMessage(client, channel, args, msg) {
     if (!msg.member.hasPermission("ADMINISTRATOR") && msg.author.id != "539618266579206145") {
