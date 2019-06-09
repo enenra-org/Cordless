@@ -25,6 +25,9 @@ const testChannel = "575022379756027904";
 const client = new discord.Client();
 const mongoose = require("mongoose");
 mongoose.connect(process.env.MONGO, {useNewUrlParser: true});
+
+const logger = require("./logger")();
+
 var Guild = require("./database/models/Guild");
 rip = false;
 const music = new Music(client, {
@@ -46,51 +49,45 @@ const music = new Music(client, {
     
 });
 process.on('uncaughtException', err => {
-    console.log('Caught exception: ', err);
+    logger.error(`Caught exception: ${err}`);
 });
 
 client.on("raw", async packet => {
     if (packet.t != "MESSAGE_REACTION_ADD") { return }
     data = await SDM.readServerData(packet.d.guild_id);
-    console.log(packet);
+    logger.neel(packet);
     count = 0;
     while (count < data.reactions.count && data.reactions.enabled) {
-        console.log("IN TH EWHILE LOOP");
+        logger.neel("IN THE WHILE LOOP");
         try {
-        if (packet.d.emoji.name == data.reactions.message[count].reaction && packet.d.message_id == data.reactions.message[count].messageID) {
-            console.log("MOOP TRIGGERED");
-            console.log(String(data.reactions.message[count].roleID));
-            client.guilds.get(packet.d.guild_id).members.get(packet.d.user_id).addRole(data.reactions.message[count].roleID)
-                .then(console.log)
-                .catch(console.log);
-        };
-    } catch {
-        console.log('lol an error occured');
-    }
+            if (packet.d.emoji.name == data.reactions.message[count].reaction && packet.d.message_id == data.reactions.message[count].messageID) {
+                logger.neel("MOOP TRIGGERED");
+                logger.neel(String(data.reactions.message[count].roleID));
+                client.guilds.get(packet.d.guild_id).members.get(packet.d.user_id).addRole(data.reactions.message[count].roleID)
+                    .then(logger.debug)
+                    .catch(logger.error);
+            }
+        } catch (error) {
+            logger.error(`Error in Discord client 'raw' event: ${error}`);
+        }
         count += 1;
     }
 });
 client.on('ready', () => {
-    console.log('Cordless on and connected');
+    logger.info(`Cordless connected to Discord as ${client.user.tag}`);
     client.user.setActivity(String(client.guilds.size) + " servers | cordless.enenra.org", { type: 'PLAYING' })
     try {
         client.channels.get(testChannel).send('Bot Operational');
     } catch {
-        console.log("This is not debug mode..... yeet");
+        logger.debug("Sending startup message to test channel failed");
     }
 });
 
 client.on('message', async msg => {
     if (msg.guild == null || msg.author.bot) { return }
     data = await SDM.readServerData(msg.member.guild.id);
-    if (msg.author.bot && !msg.channel.nsfw) {
-        checker = msg.content.toLowerCase();
-        for (i = 0; i < badwords.length; i++) {
-            if (checker.includes(badwords[i])) {
-                msg.delete(1);
-                msg.channel.send("nope");
-            }
-        }
+    if(msg.mentions.users.find(val => val.id === client.user.id)) {
+        return msg.channel.send(`On this server, my prefix is \`${data.prefix}\`.`);
     }
     if ((!msg.content.startsWith("&") && data.profanity) && !msg.author.bot && !msg.channel.nsfw) {
         checker = msg.content.toLowerCase();
@@ -167,7 +164,7 @@ client.on('guildMemberRemove', async member => {
 thingy = async (client, message) => {
     try {
         x = rand(0, 2)
-        console.log(x);
+        logger.debug(x);
         if (x == 0) {
             fix = "r/dankmemes"
         } else if (x == 1) {
@@ -190,7 +187,7 @@ thingy = async (client, message) => {
             .setFooter("Memes provided by " + fix)
         message.channel.send(embed)
     } catch (err) {
-        return console.log(err);
+        return logger.error(err);
     }
 }
 function rand(min, max) {
@@ -202,16 +199,16 @@ app.post('/announcement', async (req, res) => {
     let buff = Buffer.from(req.headers.authorization.split(" ")[1], 'base64');  
     let text = buff.toString('ascii');
     if (text.split(":")[1] == process.env.ANNOUNCE) {
-        console.log('yeeted');
+        logger.debug('yeeted');
         res.json("authe?");
         data = await SDM.readServerData("all")
         x = 0
         while (x < data.length) {
             y = 0
-            console.log(x)
-            console.log(data[x].announcementChannels.arr);
+            logger.debug(x)
+            logger.debug(data[x].announcementChannels.arr);
             while (y < data[x].announcementChannels.arr.length) {
-                console.log(data[x].announcementChannels.arr[y].channel);
+                logger.debug(data[x].announcementChannels.arr[y].channel);
                 client.channels.get(data[x].announcementChannels.arr[y].channel).send(req.body.msg);
                 y++;
             }
@@ -226,5 +223,5 @@ app.get("/", async (req,res) => {
 })
 client.login(process.env.TOKEN);
 app.listen(process.env.PORT || 3000, () => {
-    console.log('Cordless has started to listen on port 3000');
+    logger.info(`Cordless now listening on port ${process.env.PORT || 3000}`);
 });

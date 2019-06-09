@@ -13,6 +13,8 @@ LICENSE: GNU Affero GPLv3
 var Guild = require("./database/models/Guild");
 var Currency = require("./database/models/Currency");
 
+var logger = require("./logger")();
+
 exports.readServerData = async function (guildID) {
     if (guildID == "all") {
         return await Guild.find({}).exec()
@@ -51,12 +53,12 @@ exports.readServerData = async function (guildID) {
 }
 exports.achan = async function (type, channel, guildID) {
     var gguild = await Guild.findOne({ guildID }).exec();
-    console.log(gguild + "HI THERE");
+    logger.neel(gguild + "HI THERE");
     if (type == "add") {
-        console.log(gguild);
+        logger.neel(gguild);
         gguild.announcementChannels.arr.push({ channel, guildID });
         gguild.announcementChannels.count++;
-        console.log(gguild);
+        logger.neel(gguild);
         gguild.save((err, guildID) => {});
     } else if (type == "save") {
         gguild.announcementChannels = channel;
