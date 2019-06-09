@@ -4,7 +4,8 @@
   "description": "A discord bot for all your uses!",
   "main": "index.js",
   "scripts": {
-    "test": "node index.js"
+    "test": "node index.js",
+    "start": "cross-env NODE_ENV=development node index.js"
   },
   "repository": {
     "type": "git",
@@ -31,9 +32,13 @@
     "rss-parser": "^3.7.0",
     "snekfetch": "^4.0.4",
     "tunnel-agent": ">=0.6.0",
+    "winston": "^3.2.1",
     "youtube-audio-stream": "0.0.50",
     "youtube-playlist-info": "^0.1.0",
     "ytdl-core": "^0.20.1",
     "ytsearcher": "^1.0.3"
+  },
+  "devDependencies": {
+    "cross-env": "^5.2.0"
   }
 }

@@ -25,8 +25,11 @@ const axios = require('axios');
 commandsTable = {}; // Commands hash table
 var Guild = require("./database/models/Guild");
 var moment = require('moment');
+
+const logger = require("./logger")();
+
 // Color of discord bot
-async function help(client, channel, args) {
+async function help(client, channel, args, msg) {
     data = await SDM.readServerData(channel.guild.id);
     const embed = new Discord.RichEmbed();
     embed.setColor(2012);
@@ -132,25 +135,25 @@ async function setupreaction(client, channel, args, msg) {
         await client.channels.get(args[0]).fetchMessage(args[1])
             .then(message => {
                 message.react(args[2])
-                    .then(console.log)
-                    .catch(console.log);
+                    .then(logger.debug)
+                    .catch(logger.error);
             })
-            .catch(console.log);
+            .catch(logger.error);
     }
     sendReact();
     data = await SDM.readServerData(channel.guild.id);
-    console.log(data);
-    console.log(data.reactions.count)
+    logger.debug(data);
+    logger.debug(data.reactions.count)
     roleInfo = {}
     roleInfo.messageID = args[1];
     roleInfo.reaction = args[2],
-        roleInfo.roleID = args[3];
-    console.log(roleInfo);
+    roleInfo.roleID = args[3];
+    logger.debug(roleInfo);
     data.reactions.message.push(roleInfo);
-    console.log(data);
+    logger.debug(data);
     data.reactions.enabled = true;
     data.reactions.count += 1;
-    console.log(data);
+    logger.debug(data);
     await SDM.saveServerData(channel.guild.id, data);
     channel.send("Set reaction message role! :thumbsup:");
 }
@@ -165,15 +168,15 @@ async function clearReact(client, channel, args, msg) {
     data = await SDM.readServerData(channel.guild.id);
     count = 0;
     while (count < data.reactions.count) {
-        console.log("while");
+        logger.neel("while");
         try {
             if (data.reactions.message[count].messageID == args[0]) {
-                console.log("if");
+                logger.neel("if");
                 delete data.reactions.message[count];
             };
         } catch (error) {
-            console.log(error);
-            console.log("lol clear eer sccorse");
+            logger.error(`Error in function clearReact: ${error}`);
+            logger.neel("lol clear eer sccorse");
         }
         count += 1;
     }
@@ -188,11 +191,11 @@ async function mute(client, channel, args, msg) {
     }
     data = await SDM.readServerData(channel.guild.id);
     if (channel.guild.roles.find(val => val.name === "mute") != null) {
-        console.log("role exists");
-        msg.mentions.members.first().removeRoles(msg.mentions.members.first().roles).then(console.log).catch(console.error)
+        logger.neel("role exists");
+        msg.mentions.members.first().removeRoles(msg.mentions.members.first().roles).then(logger.debug).catch(logger.error)
         msg.mentions.members.first().addRole(channel.guild.roles.find(val => val.name === "mute"));
     } else {
-        console.log("role doesn't exist");
+        logger.neel("role doesn't exist");
         channel.guild.createRole({
             name: "mute",
             color: "375575883097833483",
@@ -211,7 +214,7 @@ async function mute(client, channel, args, msg) {
     }
     if (msg.mentions.users.first() != null) {
         user = msg.mentions.users.first();
-        console.log(user.id);
+        logger.neel(user.id);
     }
 
 }
@@ -271,22 +274,22 @@ async function delAnnounce(client, channel, args, msg) {
         channel.send("You NEED TO BE AN ADMIN... HHAHAHA you noooooob")
     } else {
         channels = await SDM.achan(null, null, channel.guild.id);
-        console.log(channels)
-        console.log("FINDING");
+        logger.neel(channels)
+        logger.neel("FINDING");
         var x = 0;
         try {
         while (x < channels.count) {
-            console.log(channels.arr[x]);
-            console.log(channels.arr[x].channel == args[0] && channel.guild.id == channels.arr[x].guildID);
+            logger.neel(channels.arr[x]);
+            logger.neel(channels.arr[x].channel == args[0] && channel.guild.id == channels.arr[x].guildID);
             if (channels.arr[x].channel == args[0] && channel.guild.id == channels.arr[x].guildID) {
                 channels.arr.splice(x,1);
-                console.log("DELETED");
+                logger.neel("DELETED");
             }
             x++;
         }} catch (err) {
-            console.log(err);
+            logger.neel(err);
         }
-        console.log(channels);
+        logger.neel(channels);
         await SDM.achan("save", channels, channel.guild.id);
         channel.send("Succesfully deleted the channel")
     }
@@ -308,7 +311,7 @@ async function welcomeMessage(client, channel, args, msg) {
     }
     data.welcomeMessages.mess = message;
     await SDM.saveServerData(channel.guild.id, data);
-    console.log(message);
+    logger.neel(message);
     channel.send("Channel thingy Set for welcome message");
 };
 async function delWelcome(client, channel, args, msg) {
@@ -336,13 +339,9 @@ function xkcd(client, channel, args, msg) {
                         .setFooter("This webcomic was gotten from https://xkcd.com")
                     channel.send(embed);
                 })
-                .catch(function (error) {
-                    console.log(error);
-                })
+                .catch(logger.error);
         })
-        .catch(function (error) {
-            console.log(error);
-        })
+        .catch(logger.error);
 }
 async function leaveSetup(client, channel, args, msg) {
     if (!msg.member.hasPermission("ADMINISTRATOR") && msg.author.id != "539618266579206145") {
@@ -361,8 +360,8 @@ async function leaveSetup(client, channel, args, msg) {
     channel.send("Channel ID Set for leave message");
 };
 async function prechange(client, channel, args, msg) {
-    console.log(args[0]);
-    console.log(typeof (args[0]))
+    logger.neel(args[0]);
+    logger.neel(typeof (args[0]))
     if (!msg.member.hasPermission("ADMINISTRATOR") && msg.author.id != "539618266579206145") {
         channel.send("You do not have the permissions to run this command!");
         return;
@@ -375,7 +374,7 @@ async function prechange(client, channel, args, msg) {
     data.prefix = args[0];
     data.prefix = data.prefix.replace("{space}"," ")
     await SDM.saveServerData(channel.guild.id, data);
-    channel.send("@everyone The prefix for this server is now `" + args[0].replace("{space}"," ")+"`");
+    channel.send("The prefix for this server is now `" + args[0].replace("{space}"," ")+"`");
 }
 async function leaveMessage(client, channel, args, msg) {
     if (!msg.member.hasPermission("ADMINISTRATOR") && msg.author.id != "539618266579206145") {
@@ -394,7 +393,7 @@ async function leaveMessage(client, channel, args, msg) {
     }
     data.leaveMessages.mess = message;
     await SDM.saveServerData(channel.guild.id, data);
-    console.log(message);
+    logger.neel(message);
     channel.send("Channel thingy Set for leave message");
 };
 function msgdel(client, channel, args, message) {
@@ -407,7 +406,7 @@ function msgdel(client, channel, args, message) {
         return;
     }
     number = Number(args[0]) + 1;
-    console.log(number);
+    logger.neel(number);
     message.channel.bulkDelete(number).then(() => {
         message.channel.send("**Deleted " + args[0] + " messages.**").then(msg => msg.delete(3000));
     }).catch(() => {
@@ -432,7 +431,7 @@ async function delLeave(client, channel, args, msg) {
 async function addMun(client, channel, args, msg) {
     data = await SDM.readUser(msg.author.id);
     var curr = moment(data.times.begtime)
-    console.log(curr.diff(moment(),"seconds"));
+    logger.neel(curr.diff(moment(),"seconds"));
     if (curr.diff(moment(),"seconds") > -60 ) {
         channel.send(`Too fast, you dirty begger. Wait ${60-(0 - curr.diff(moment(),"seconds"))} more seconds.`)
         return;
@@ -440,7 +439,7 @@ async function addMun(client, channel, args, msg) {
     added = rand(0, 70)
     data.money += added;
     data.times.begtime = moment();
-    console.log(data);
+    logger.neel(data);
     await SDM.writeUser(msg.author.id, data);
     await channel.send(`Stop begging you brat! I'll only give you ${added} coins!`);
 }
@@ -455,7 +454,7 @@ async function gamble(client, channel, args, msg) {
         betAmount = data.money;
     }
     var curr = moment(data.times.bettime)
-    console.log(curr.diff(moment(),"seconds"));
+    logger.neel(curr.diff(moment(),"seconds"));
     if (curr.diff(moment(),"seconds") > -10 ) {
         channel.send(`Too fast, you gambler! Wait ${10-(0 - curr.diff(moment(),"seconds"))} more seconds.`)
         return;
@@ -480,7 +479,7 @@ async function gamble(client, channel, args, msg) {
         channel.send(embed);
     }
     data.times.bettime = moment();
-    console.log(data);
+    logger.neel(data);
     await SDM.writeUser(msg.author.id, data);
 }
 async function bal(client, channel, args, msg) {
