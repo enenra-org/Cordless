@@ -5,6 +5,7 @@ For docs visit https://cordless.enenra.org
 
 Contributers:
 Neel Redkar
+Wong Zhao
 Evan Nishi
 
 LICENSE: GNU Affero GPLv3
