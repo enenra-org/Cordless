@@ -13,14 +13,12 @@ LICENSE: GNU Affero GPLv3
 const discord = require('discord.js');
 require('dotenv').config()
 const commands = require("./commands");
-const snekfetch = require('snekfetch');
 const SDM = require('./server-data-manager');
 const express = require('express');
 var app = express();
 var bodyParser = require("body-parser");
 app.use(bodyParser({limit: '50mb'}));
 const Music = require("./discord-music");
-const memechan = ["https://www.reddit.com/r/dankmemes/rising/.json", "https://www.reddit.com/r/me_irl/rising/.json", "https://www.reddit.com/r/memes/rising/.json"];
 const badwords = ["4r5e", "5h1t", "5hit", "a55", "anal", "anus", "ar5e", "arrse", "arse", "ass", "a_s_s", "b!tch", "b00bs", "b17ch", "b1tch", "bi+ch", "biatch", "bitch", "blow job", "blowjob", "blowjobs", "boiolas", "bollock", "bollok", "boner", "boob", "booobs", "boooobs", "booooobs", "booooooobs", "breasts", "buttplug", "c0ck", "c0cksucker", "cawk", "clit", "clitoris", "clits", "cnut", "cock", "cok", "cox", "cum", "cunt", "cyalis", "d1ck", "damn", "dick", "dickhead", "dildo", "dildos", "dink", "dinks", "dirsa", "dlck", "dog-fucker", "doggin", "dogging", "donkeyribber", "doosh", "duche", "dyke", "ejaculate", "ejaculated", "ejaculates", "ejaculating", "ejaculatings", "ejaculation", "ejakulate", "f u c k", "f u c k e r", "f4nny", "fag", "fcuk", "feck", "felching", "flange", "fook", "fooker", "fuck", "fuk", "fux", "f_u_c_k", "gaysex", "hell", "hoar", "hoer", "hore", "horniest", "horny", "hotsex", "jack-off", "jackoff", "jerk-off", "kock", "kondum", "kum", "kunilingus", "l3i+ch", "l3itch", "labia", "lusting", "m45terbate", "ma5terb8", "ma5terbate", "masochist", "master-bate", "masterb8", "masterbat*", "masterbat3", "masterbate", "masterbation", "masterbations", "masturbate", "mo-fo", "mof0", "mofo", "mothafuck", "mothafucka", "mothafuckas", "mothafuckaz", "mothafucked", "mothafucker", "mothafuckers", "mothafuckin", "mothafucking", "mothafuckings", "mothafucks", "mother fucker", "motherfuck", "motherfucked", "motherfucker", "motherfuckers", "motherfuckin", "motherfucking", "motherfuckings", "motherfuckka", "motherfucks", "muff", "muthafecker", "muthafuckker", "muther", "mutherfucker", "n1gga", "n1gger", "nigg3r", "nigg4h", "nigga", "niggah", "niggas", "niggaz", "nigger", "niggers", "numbnuts", "nutsack", "orgasim", "orgasims", "orgasm", "orgasms", "p0rn", "pawn", "pecker", "penis", "penisfucker", "phonesex", "phuck", "phuk", "phuked", "phuking", "phukked", "phukking", "phuks", "phuq", "pigfucker", "pimpis", "piss", "porn", "porno", "pube", "pusse", "pussi", "pussies", "pussy", "pussys", "rectum", "retard", "rimjaw", "rimming", "s hit", "semen", "sex", "sh!+", "sh!t", "sh1t", "shag", "shagger", "shaggin", "shi+", "shit", "skank", "slut", "sluts", "smegma", "smut", "snatch", "s_h_i_t", "t1tt1e5", "t1tties", "teets", "testical", "testicle", "tit", "vagina", "whoar", "whore"];
 const testChannel = "575022379756027904";
 const client = new discord.Client();
@@ -90,7 +88,7 @@ client.on('message', async msg => {
     if(msg.mentions.users.find(val => val.id === client.user.id)) {
         return msg.channel.send(`On this server, my prefix is \`${data.prefix}\`.`);
     }
-    if ((!msg.content.startsWith("&") && data.profanity) && !msg.author.bot && !msg.channel.nsfw) {
+    if ((!msg.content.startsWith("&") && data.profanity) && !msg.channel.nsfw) {
         checker = msg.content.toLowerCase();
         for (i = 0; i < badwords.length; i++) {
             if (checker.includes(badwords[i])) {
@@ -98,21 +96,6 @@ client.on('message', async msg => {
                 msg.channel.send(":rage: NO CURSING!! :rage: ");
             }
         }
-    } else if (msg.content == "&startflow") {
-        msg.channel.send("THE MEMEFLOW HAS BEGUN!!!!!!!!!!!!!!!(**Warning! Possible NSFW content**)")
-        mannn = setInterval(() => {
-            thingy(client, msg)
-            if (rip) {
-                msg.channel.send("STOPPPEDDDD!!!!");
-                rip = false;
-                clearInterval(mannn);
-            }
-        }, 10000);
-    } else if (msg.content == "&stopflow") {
-        rip = true;
-        msg.channel.send("Memeflow will soon stop....")
-    } else if (msg.content == "&meme") {
-        thingy(client, msg);
     }
     if (msg.content.startsWith(data.prefix)) {
         messy = msg.content.slice(data.prefix.length);
@@ -162,35 +145,7 @@ client.on('guildMemberRemove', async member => {
         return;
     }
 });
-thingy = async (client, message) => {
-    try {
-        x = rand(0, 2)
-        logger.debug(x);
-        if (x == 0) {
-            fix = "r/dankmemes"
-        } else if (x == 1) {
-            fix = "r/me_irl"
-        } else if (x == 2) {
-            fix = "r/memes"
-        }
-        const { body } = await snekfetch
-            .get(memechan[x])
-            .query({ limit: 800 });
-        const allowed = message.channel.nsfw ? body.data.children : body.data.children.filter(post => !post.data.over_18);
-        if (!allowed.length) return message.channel.send('It seems we are out of fresh memes!, Try again later.');
-        const randomnumber = Math.floor(Math.random() * allowed.length)
-        const embed = new discord.RichEmbed()
-            .setColor(0x00A2E8)
-            .setTitle(allowed[randomnumber].data.title)
-            .setDescription("Posted by: " + allowed[randomnumber].data.author)
-            .setImage(allowed[randomnumber].data.url)
-            .addField("Other info:", "Up votes: " + allowed[randomnumber].data.ups + " / Comments: " + allowed[randomnumber].data.num_comments)
-            .setFooter("Memes provided by " + fix)
-        message.channel.send(embed)
-    } catch (err) {
-        return logger.error(err);
-    }
-}
+
 function rand(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
