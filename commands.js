@@ -20,20 +20,18 @@ function help(client, channel, args) {
 */
 let Parser = require("rss-parser");
 let parser = new Parser();
-const Discord = require("discord.js");
+const { RichEmbed } = require("discord.js");
 const SDM = require("./server-data-manager");
 const axios = require("axios");
 commandsTable = {}; // Commands hash table
-var Guild = require("./database/models/Guild");
 var moment = require("moment");
-const snekfetch = require("snekfetch");
+const fetch = require("node-fetch");
 
 const logger = require("./logger")();
 
-// Color of discord bot
 async function help(client, channel, args, msg) {
     data = await SDM.readServerData(channel.guild.id);
-    const embed = new Discord.RichEmbed();
+    const embed = new RichEmbed();
     embed.setColor(2012);
     switch (args[0]) {
         case "general":
@@ -57,13 +55,18 @@ async function help(client, channel, args, msg) {
             embed.addField("Meme Commands", "`startflow, stopflow, meme, xkcd`");
             break;
         default:
-            embed.setTitle("Cordless Help");
-            embed.setDescription("For a full set of commands and descriptions visit https://cordless.enenra.org/documentation \n \n Your prefix is **" + data.prefix + "**");
-            embed.addField("General", "For more info on general commands, try `" + data.prefix + "help general`");
-            embed.addField("Music", "For more info on music commands, try `" + data.prefix + "help music`");
-            embed.addField("Moderation", "For more info on moderation commands, try `" + data.prefix + "help mod`");
-            embed.addField("Utility", "For more info on utitlity commands, try `" + data.prefix + "help util`");
-            embed.addField("Memes", "For more info on meme commands, try `" + data.prefix + "help mem`");
+            if(helpInformation.hasOwnProperty(args[0])) {
+                embed.setTitle(args[0]);
+                embed.setDescription(helpInformation[args[0]]);
+            } else {
+                embed.setTitle("Cordless Help");
+                embed.setDescription("For a full set of commands and descriptions visit https://cordless.enenra.org/documentation \n \n Your prefix is **" + data.prefix + "**");
+                embed.addField("General", "For more info on general commands, try `" + data.prefix + "help general`");
+                embed.addField("Music", "For more info on music commands, try `" + data.prefix + "help music`");
+                embed.addField("Moderation", "For more info on moderation commands, try `" + data.prefix + "help mod`");
+                embed.addField("Utility", "For more info on utitlity commands, try `" + data.prefix + "help util`");
+                embed.addField("Memes", "For more info on meme commands, try `" + data.prefix + "help mem`");
+            }
     }
     channel.send({ embed });
 }
@@ -110,7 +113,7 @@ function makeEmbed(client, channel, args, msg) {
     } else if (args.length < 3) {
         channel.send("Please input a number for the color and the text separated by |");
     }
-    const embed = new Discord.RichEmbed();
+    const embed = new RichEmbed();
     try {
         embed.setColor(args[0]);
     } catch {
@@ -221,7 +224,7 @@ async function mute(client, channel, args, msg) {
 
 }
 function info(client, channel, args, msg) {
-    embed = new Discord.RichEmbed()
+    embed = new RichEmbed()
         .setTitle("Info")
         .setColor(0xEFFF00)
         .setDescription("Hi! This is Cordless, a discord bot for all your needs! \n \n Find our discord server at https://discord.gg/sTCsbew and view my code at https://github.com/enenra-team-tech/discord-bot \n \n Thanks for using Cordless!!! :smile: :thumbsup:")
@@ -255,7 +258,7 @@ async function prof(client, channel, args, msg) {
     if (data.profanity == true) {
         channel.send("Profanity filter on! :thumbsup: ");
     } else {
-        channel.send("Profanity filter off?!?!?! :rage:")
+        channel.send("Profanity filter off?!?!?! :rage:");
     }
     await SDM.saveServerData(channel.guild.id, data);
 }
@@ -280,12 +283,12 @@ async function delAnnounce(client, channel, args, msg) {
         logger.neel("FINDING");
         var x = 0;
         try {
-        while (x < channels.count) {
-            logger.neel(channels.arr[x]);
-            logger.neel(channels.arr[x].channel == args[0] && channel.guild.id == channels.arr[x].guildID);
-            if (channels.arr[x].channel == args[0] && channel.guild.id == channels.arr[x].guildID) {
-                channels.arr.splice(x,1);
-                logger.neel("DELETED");
+            while (x < channels.count) {
+                logger.neel(channels.arr[x]);
+                logger.neel(channels.arr[x].channel == args[0] && channel.guild.id == channels.arr[x].guildID);
+                if (channels.arr[x].channel == args[0] && channel.guild.id == channels.arr[x].guildID) {
+                    channels.arr.splice(x,1);
+                    logger.neel("DELETED");
             }
             x++;
         }} catch (err) {
@@ -293,7 +296,7 @@ async function delAnnounce(client, channel, args, msg) {
         }
         logger.neel(channels);
         await SDM.achan("save", channels, channel.guild.id);
-        channel.send("Succesfully deleted the channel")
+        channel.send("Succesfully deleted the channel");
     }
 }
 async function welcomeMessage(client, channel, args, msg) {
@@ -324,16 +327,16 @@ async function delWelcome(client, channel, args, msg) {
     data = await SDM.readServerData(channel.guild.id);
     data.welcomeMessages.welcomeMessageEnabled = false;
     await SDM.saveServerData(channel.guild.id, data);
-    channel.send("Stopped welcomes!")
+    channel.send("Stopped welcomes!");
 }
 function xkcd(client, channel, args, msg) {
     axios.get('https://xkcd.com/info.0.json')
         .then(function (response) {
-            numMem = response.data.num
+            numMem = response.data.num;
             number = rand(1, numMem);
             axios.get('https://xkcd.com/' + number + '/info.0.json')
                 .then(function (res) {
-                    const embed = new Discord.RichEmbed()
+                    const embed = new RichEmbed()
                         .setColor(0x96a8c8)
                         .setTitle("A xkcd webcomic")
                         .setDescription(res.data.title)
@@ -374,9 +377,9 @@ async function prechange(client, channel, args, msg) {
 
     data = await SDM.readServerData(channel.guild.id);
     data.prefix = args[0];
-    data.prefix = data.prefix.replace("{space}"," ")
+    data.prefix = data.prefix.replace("{space}", " ");
     await SDM.saveServerData(channel.guild.id, data);
-    channel.send("@everyone The prefix for this server is now `" + args[0].replace("{space}"," ")+"`");
+    channel.send(`@everyone The prefix for this server is now \`${data.prefix}\``);
 }
 async function leaveMessage(client, channel, args, msg) {
     if (!msg.member.hasPermission("ADMINISTRATOR") && msg.author.id != "539618266579206145") {
@@ -467,17 +470,17 @@ async function gamble(client, channel, args, msg) {
     multiplier = rand(0, 2);
     if (multiplier == 0) {
         data.money+=Math.round(Number(betAmount*0.5));
-        const embed = new Discord.RichEmbed()
+        const embed = new RichEmbed()
             .setTitle("Gambling Results!")
             .setDescription(`You have won ${Math.round(Number(betAmount*0.5))} more coins! Your new balance is ${data.money}!`)
-            .setColor(0x13a532)
+            .setColor(0x13a532);
         channel.send(embed);
     } else {
-        data.money-=betAmount;
-        const embed = new Discord.RichEmbed()
+        data.money -= betAmount;
+        const embed = new RichEmbed()
             .setTitle("Gambling Results!")
             .setDescription(`You have LOST ${betAmount} coins! Your new balance is ${data.money}!`)
-            .setColor(0xec1b1b)
+            .setColor(0xec1b1b);
         channel.send(embed);
     }
     data.times.bettime = moment();
@@ -486,7 +489,7 @@ async function gamble(client, channel, args, msg) {
 }
 async function bal(client, channel, args, msg) {
     data = await SDM.readUser(msg.author.id);
-    channel.send(`Your balance is ${data.money} coins`)
+    channel.send(`Your balance is ${data.money} coins`);
 }
 
 var rip = false;
@@ -497,26 +500,27 @@ const getMeme = async (client, message) => {
         x = rand(0, 2)
         logger.debug(x);
         if (x == 0) {
-            fix = "r/dankmemes"
+            fix = "r/dankmemes";
         } else if (x == 1) {
-            fix = "r/me_irl"
+            fix = "r/me_irl";
         } else if (x == 2) {
-            fix = "r/memes"
+            fix = "r/memes";
         }
-        const { body } = await snekfetch
-            .get(memechan[x])
-            .query({ limit: 800 });
-        const allowed = message.channel.nsfw ? body.data.children : body.data.children.filter(post => !post.data.over_18);
-        if (!allowed.length) return message.channel.send('It seems we are out of fresh memes!, Try again later.');
-        const randomnumber = Math.floor(Math.random() * allowed.length)
-        const embed = new Discord.RichEmbed()
-            .setColor(0x00A2E8)
-            .setTitle(allowed[randomnumber].data.title)
-            .setDescription("Posted by: " + allowed[randomnumber].data.author)
-            .setImage(allowed[randomnumber].data.url)
-            .addField("Other info:", "Up votes: " + allowed[randomnumber].data.ups + " / Comments: " + allowed[randomnumber].data.num_comments)
-            .setFooter("Memes provided by " + fix)
-        message.channel.send(embed)
+        fetch(memechan[x] + "?limit=800")
+        .then(res => res.json())
+        .then(body => {
+            const allowed = message.channel.nsfw ? body.data.children : body.data.children.filter(post => !post.data.over_18);
+            if (!allowed.length) return message.channel.send('It seems we are out of fresh memes!, Try again later.');
+            const randomnumber = Math.floor(Math.random() * allowed.length);
+            const embed = new RichEmbed()
+                .setColor(0x00A2E8)
+                .setTitle(allowed[randomnumber].data.title)
+                .setDescription("Posted by: " + allowed[randomnumber].data.author)
+                .setImage(allowed[randomnumber].data.url)
+                .addField("Other info:", "Up votes: " + allowed[randomnumber].data.ups + " / Comments: " + allowed[randomnumber].data.num_comments)
+                .setFooter("Memes provided by " + fix);
+            message.channel.send(embed);
+        });
     } catch (err) {
         return logger.error(err);
     }
@@ -563,10 +567,10 @@ helpInformation["leave-message"] = "Sets leave Message with $name as name and $c
 helpInformation["leave-stop"] = "Stops the leave messages. Turn back on with setup!";
 helpInformation["clear"] = "clear a number of messages with this command!";
 helpInformation["prof"] = "toggles profanity filter!";
-helpInformation["startflow"] = "Starts a flow of memes in a channel!"
-helpInformation["stopflow"] = "Stops a flow of memes in a channel!"
-helpInformation["fml"] = "Gives a random fml"
-helpInformation["meme"] = "one. single. meme."
+helpInformation["startflow"] = "Starts a flow of memes in a channel!";
+helpInformation["stopflow"] = "Stops a flow of memes in a channel!";
+helpInformation["fml"] = "Gives a random fml";
+helpInformation["meme"] = "one. single. meme.";
 
 commandsTable["mute"] = mute;
 commandsTable["embed"] = makeEmbed;

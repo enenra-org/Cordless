@@ -60,7 +60,7 @@ exports.achan = async function (type, channel, guildID) {
         gguild.announcementChannels.arr.push({ channel, guildID });
         gguild.announcementChannels.count++;
         logger.neel(gguild);
-        gguild.save((err, guildID) => {});
+        gguild.save((err, guild) => {});
     } else if (type == "save") {
         gguild.announcementChannels = channel;
         gguild.save((err, guild) => {});
@@ -77,8 +77,8 @@ exports.readUser = async function (PID) {
             PID,
             money:0,
             times: {
-                begtime:"",
-                bettime:""
+                begtime: "",
+                bettime: ""
             }
         }
     }
@@ -91,9 +91,9 @@ exports.writeUser = async function (PID,newDat) {
         data.money = newDat.money;
         data.times = newDat.times
     } else {
-        data = newDat
+        data = newDat;
     }
-    await data.save((err,guild) => {});
+    await data.save((err, guild) => {});
 }
 exports.saveServerData = async function (guildID, newData) {
     var guild = await Guild.findOne({ guildID }).exec();
