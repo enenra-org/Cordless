@@ -18,14 +18,15 @@ function help(client, channel, args) {
     
 }
 */
-let Parser = require('rss-parser');
+let Parser = require("rss-parser");
 let parser = new Parser();
-const Discord = require('discord.js');
-const SDM = require('./server-data-manager');
-const axios = require('axios');
+const Discord = require("discord.js");
+const SDM = require("./server-data-manager");
+const axios = require("axios");
 commandsTable = {}; // Commands hash table
 var Guild = require("./database/models/Guild");
-var moment = require('moment');
+var moment = require("moment");
+const snekfetch = require("snekfetch");
 
 const logger = require("./logger")();
 
@@ -487,6 +488,61 @@ async function bal(client, channel, args, msg) {
     data = await SDM.readUser(msg.author.id);
     channel.send(`Your balance is ${data.money} coins`)
 }
+
+var rip = false;
+const memechan = ["https://www.reddit.com/r/dankmemes/rising/.json", "https://www.reddit.com/r/me_irl/rising/.json", "https://www.reddit.com/r/memes/rising/.json"];
+
+const getMeme = async (client, message) => {
+    try {
+        x = rand(0, 2)
+        logger.debug(x);
+        if (x == 0) {
+            fix = "r/dankmemes"
+        } else if (x == 1) {
+            fix = "r/me_irl"
+        } else if (x == 2) {
+            fix = "r/memes"
+        }
+        const { body } = await snekfetch
+            .get(memechan[x])
+            .query({ limit: 800 });
+        const allowed = message.channel.nsfw ? body.data.children : body.data.children.filter(post => !post.data.over_18);
+        if (!allowed.length) return message.channel.send('It seems we are out of fresh memes!, Try again later.');
+        const randomnumber = Math.floor(Math.random() * allowed.length)
+        const embed = new Discord.RichEmbed()
+            .setColor(0x00A2E8)
+            .setTitle(allowed[randomnumber].data.title)
+            .setDescription("Posted by: " + allowed[randomnumber].data.author)
+            .setImage(allowed[randomnumber].data.url)
+            .addField("Other info:", "Up votes: " + allowed[randomnumber].data.ups + " / Comments: " + allowed[randomnumber].data.num_comments)
+            .setFooter("Memes provided by " + fix)
+        message.channel.send(embed)
+    } catch (err) {
+        return logger.error(err);
+    }
+}
+
+async function startFlow(client, channel, args, msg) {
+    msg.channel.send("THE MEMEFLOW HAS BEGUN!!!!!!!!!!!!!!!(**Warning! Possible NSFW content**)")
+    mannn = setInterval(() => {
+        getMeme(client, msg)
+        if (rip) {
+            msg.channel.send("STOPPPEDDDD!!!!");
+            rip = false;
+            clearInterval(mannn);
+        }
+    }, 10000);
+}
+
+async function stopFlow(client, channel, args, msg) {
+    rip = true;
+    msg.channel.send("Memeflow will soon stop....");
+}
+
+async function meme(client, channel, args, msg) {
+    getMeme(client, msg);
+}
+
 exports.runCommand = function runCommand(command, args, channel, client, msg) {
     if (commandsTable.hasOwnProperty(command)) {
         commandsTable[command](client, channel, args, msg);
@@ -536,6 +592,11 @@ commandsTable["prechange"] = prechange;
 commandsTable["bal"] = bal;
 commandsTable["beg"] = addMun;
 commandsTable["bet"] = gamble;
+
+commandsTable["startflow"] = startFlow;
+commandsTable["stopflow"] = stopFlow;
+commandsTable["meme"] = meme;
+
 function rand(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
