@@ -28,47 +28,27 @@ const fetch = require("node-fetch");
 
 const logger = require("./logger")();
 
-async function help(client, channel, args, msg) {
-    data = await SDM.readServerData(channel.guild.id);
-    const embed = new RichEmbed();
-    embed.setColor(2012);
-    switch (args[0]) {
-        case "general":
-            embed.setTitle("Cordless General Help");
-            embed.addField("General Commands", "`help, prechange, ping, addanoun`");
-            break;
-        case "music":
-            embed.setTitle("Cordless Music Help");
-            embed.addField("Music Commands", "`play, pause, resume, queue, skip, loop, setvol, search, clearqueue, np, leavemus`");
-            break;
-        case "mod":
-            embed.setTitle("Cordless Moderation Help");
-            embed.addField("Moderation Commands", "`mute, prof, swears`");
-            break;
-        case "util":
-            embed.setTitle("Cordless Utility Help");
-            embed.addField("Utility Commands", "`clear, embed, welcome-message, welcome-setup, welcome-stop, leave-message, leave-setup, leave-stop`");
-            break;
-        case "mem":
-            embed.setTitle("Cordless Meme Help");
-            embed.addField("Meme Commands", "`startflow, stopflow, meme, xkcd`");
-            break;
-        default:
-            if(helpInformation.hasOwnProperty(args[0])) {
-                embed.setTitle(args[0]);
-                embed.setDescription(helpInformation[args[0]]);
-            } else {
-                embed.setTitle("Cordless Help");
-                embed.setDescription("For a full set of commands and descriptions visit https://cordless.enenra.org/documentation \n \n Your prefix is **" + data.prefix + "**");
-                embed.addField("General", "For more info on general commands, try `" + data.prefix + "help general`");
-                embed.addField("Music", "For more info on music commands, try `" + data.prefix + "help music`");
-                embed.addField("Moderation", "For more info on moderation commands, try `" + data.prefix + "help mod`");
-                embed.addField("Utility", "For more info on utitlity commands, try `" + data.prefix + "help util`");
-                embed.addField("Memes", "For more info on meme commands, try `" + data.prefix + "help mem`");
-            }
-    }
-    channel.send({ embed });
-}
+const fs = require("fs");
+const path = require("path");
+const annotations = require("annotations");
+
+var commandList = {};
+
+var files = fs.readdirSync(path.join(__dirname, "commands"));
+var paths = [];
+files.forEach(file => {
+    paths.push(path.join(__dirname, "commands", file));
+});
+
+paths.forEach(async ppath => {
+    var { run } = require(ppath);
+    var result = annotations.getSync(ppath);
+    const opts = result.run;
+    commandList[opts.name] = { opts, run };
+});
+
+logger.info(`Registered ${paths.length} commands via the new system.`);
+
 async function clearchan(client, channel, args, msg) {
     //DEBBUGEING
     msg.delete();
@@ -81,17 +61,6 @@ async function clearchan(client, channel, args, msg) {
     msg.delete(3000);
 }
 
-function argPrint(client, channel, args) {
-    channel.send(args[0]);
-}
-//Basic ping pong command.  Returns user's ping
-function ping(client, channel, args) {
-    const embed = {
-        "color": 15747444,
-        "description": "🏓Pong! " + client.ping + " ms🏓"
-    };
-    channel.send({ embed });
-}
 async function fml(client, channel, args) {
     array = [];
     let feed = await parser.parseURL('https://www.fmylife.com/rss');
@@ -547,6 +516,10 @@ async function meme(client, channel, args, msg) {
 }
 
 async function swears(client, channel, args, msg) {
+    if (!msg.member.hasPermission("MANAGE_GUILD")) {
+        channel.send("You do not have the permissions to run this command!");
+        return;
+    }
     var data = await SDM.readServerData(channel.guild.id);
     const mode = args[0].toLowerCase();
     switch(mode) {
@@ -585,35 +558,24 @@ async function swears(client, channel, args, msg) {
 exports.runCommand = function runCommand(command, args, channel, client, msg) {
     if (commandsTable.hasOwnProperty(command)) {
         commandsTable[command](client, channel, args, msg);
+    } else if (commandList.hasOwnProperty(command)) {
+        const commandD = commandList[command];
+        const opts = commandD.opts;
+        if(opts.permissions) {
+            if(msg.member.hasPermission(opts.permissions.split(" "))) {
+                commandList[command].run(client, channel, args, msg);
+            } else {
+                channel.send(`You do not have the required permissions to run this command: ${opts.permissions}`)
+            }
+        } else {
+            commandList[command].run(client, channel, args, msg);
+        }
     }
 }
-
-helpInformation = {}; // Help information
-helpInformation["help"] = "The help function... for purposes";
-helpInformation["ping"] = "Get the discord bot's ping to your server.";
-helpInformation["embed"] = "Make discord embeds";
-helpInformation["argprint"] = "Prints arguments, mostly for debugging";
-helpInformation["mute"] = "Mutes a user(must have roles below the bots)";
-helpInformation["welcome-setup"] = "Sets user welcome channel ID";
-helpInformation["welcome-message"] = "Sets Welcome Message with $name as name and $count as member count";
-helpInformation["welcome-stop"] = "Stops the welcome messages. Turn back on with setup!"
-helpInformation["leave-setup"] = "Sets user leave channel ID";
-helpInformation["leave-message"] = "Sets leave Message with $name as name and $count as member count";
-helpInformation["leave-stop"] = "Stops the leave messages. Turn back on with setup!";
-helpInformation["clear"] = "clear a number of messages with this command!";
-helpInformation["prof"] = "toggles profanity filter!";
-helpInformation["startflow"] = "Starts a flow of memes in a channel!";
-helpInformation["stopflow"] = "Stops a flow of memes in a channel!";
-helpInformation["fml"] = "Gives a random fml";
-helpInformation["meme"] = "one. single. meme.";
-helpInformation["swears"] = "Configures swear lists. Enable filter with the `prof` command. Has options `add`, `remove`, `list`, `clear`, or `reset`."
 
 commandsTable = {};
 commandsTable["mute"] = mute;
 commandsTable["embed"] = makeEmbed;
-commandsTable["argprint"] = argPrint;
-commandsTable["help"] = help;
-commandsTable["ping"] = ping;
 commandsTable["welcome-setup"] = welcomeSetup;
 commandsTable["welcome-message"] = welcomeMessage;
 commandsTable["welcome-stop"] = delWelcome;
