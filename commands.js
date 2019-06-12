@@ -23,7 +23,6 @@ let parser = new Parser();
 const { RichEmbed } = require("discord.js");
 const SDM = require("./server-data-manager");
 const axios = require("axios");
-commandsTable = {}; // Commands hash table
 var moment = require("moment");
 const fetch = require("node-fetch");
 
@@ -44,7 +43,7 @@ async function help(client, channel, args, msg) {
             break;
         case "mod":
             embed.setTitle("Cordless Moderation Help");
-            embed.addField("Moderation Commands", "`mute, prof`");
+            embed.addField("Moderation Commands", "`mute, prof, swears`");
             break;
         case "util":
             embed.setTitle("Cordless Utility Help");
@@ -159,7 +158,7 @@ async function setupreaction(client, channel, args, msg) {
     data.reactions.enabled = true;
     data.reactions.count += 1;
     logger.debug(data);
-    await SDM.saveServerData(channel.guild.id, data);
+    await SDM.saveServerData(data);
     channel.send("Set reaction message role! :thumbsup:");
 }
 async function clearReact(client, channel, args, msg) {
@@ -185,7 +184,7 @@ async function clearReact(client, channel, args, msg) {
         }
         count += 1;
     }
-    await SDM.saveServerData(channel.guild.id, data);
+    await SDM.saveServerData(data);
     channel.send("Reaction has been deleted!");
 }
 //creates mute role
@@ -210,12 +209,12 @@ async function mute(client, channel, args, msg) {
             permissions: ["READ_MESSAGE_HISTORY", "CONNECT"]
         });
         msg.mentions.members.first().addRole(channel.guild.roles.find(val => val.name === "mute"));
-        await SDM.saveServerData(channel.guild.id, data);
+        await SDM.saveServerData(data);
     }
 
     if (data.mute.roleID = "") {
         data.mute.roleID = channel.guild.roles.find(val => val.name === "mute").id;
-        await SDM.saveServerData(channel.guild.id, data);
+        await SDM.saveServerData(data);
     }
     if (msg.mentions.users.first() != null) {
         user = msg.mentions.users.first();
@@ -245,7 +244,7 @@ async function welcomeSetup(client, channel, args, msg) {
     data = await SDM.readServerData(channel.guild.id);
     data.welcomeMessages.welcomeMessageEnabled = true;
     data.welcomeMessages.welcomeChannelID = args[0];
-    await SDM.saveServerData(channel.guild.id, data);
+    await SDM.saveServerData(data);
     channel.send("Channel ID Set for welcome message");
 };
 async function prof(client, channel, args, msg) {
@@ -260,7 +259,7 @@ async function prof(client, channel, args, msg) {
     } else {
         channel.send("Profanity filter off?!?!?! :rage:");
     }
-    await SDM.saveServerData(channel.guild.id, data);
+    await SDM.saveServerData(data);
 }
 async function addAnnounce(client, channel, args, msg) {
     if (isNaN(args[0])) {
@@ -315,7 +314,7 @@ async function welcomeMessage(client, channel, args, msg) {
         x++;
     }
     data.welcomeMessages.mess = message;
-    await SDM.saveServerData(channel.guild.id, data);
+    await SDM.saveServerData(data);
     logger.neel(message);
     channel.send("Channel thingy Set for welcome message");
 };
@@ -326,7 +325,7 @@ async function delWelcome(client, channel, args, msg) {
     }
     data = await SDM.readServerData(channel.guild.id);
     data.welcomeMessages.welcomeMessageEnabled = false;
-    await SDM.saveServerData(channel.guild.id, data);
+    await SDM.saveServerData(data);
     channel.send("Stopped welcomes!");
 }
 function xkcd(client, channel, args, msg) {
@@ -361,7 +360,7 @@ async function leaveSetup(client, channel, args, msg) {
     data = await SDM.readServerData(channel.guild.id);
     data.leaveMessages.leaveMessageEnabled = true;
     data.leaveMessages.leaveChannelID = args[0];
-    await SDM.saveServerData(channel.guild.id, data);
+    await SDM.saveServerData(data);
     channel.send("Channel ID Set for leave message");
 };
 async function prechange(client, channel, args, msg) {
@@ -378,7 +377,7 @@ async function prechange(client, channel, args, msg) {
     data = await SDM.readServerData(channel.guild.id);
     data.prefix = args[0];
     data.prefix = data.prefix.replace("{space}", " ");
-    await SDM.saveServerData(channel.guild.id, data);
+    await SDM.saveServerData(data);
     channel.send(`@everyone The prefix for this server is now \`${data.prefix}\``);
 }
 async function leaveMessage(client, channel, args, msg) {
@@ -397,7 +396,7 @@ async function leaveMessage(client, channel, args, msg) {
         x++;
     }
     data.leaveMessages.mess = message;
-    await SDM.saveServerData(channel.guild.id, data);
+    await SDM.saveServerData(data);
     logger.neel(message);
     channel.send("Channel thingy Set for leave message");
 };
@@ -428,7 +427,7 @@ async function delLeave(client, channel, args, msg) {
     }
     data = await SDM.readServerData(channel.guild.id);
     data.leaveMessages.leaveMessageEnabled = false;
-    await SDM.saveServerData(channel.guild.id, data);
+    await SDM.saveServerData(data);
     channel.send("Stopped leaves!")
 }
 
@@ -547,6 +546,42 @@ async function meme(client, channel, args, msg) {
     getMeme(client, msg);
 }
 
+async function swears(client, channel, args, msg) {
+    var data = await SDM.readServerData(channel.guild.id);
+    const mode = args[0].toLowerCase();
+    switch(mode) {
+        case "reset":
+            data.swears = ["4r5e", "5h1t", "5hit", "a55", "anal", "anus", "ar5e", "arrse", "arse", "ass", "a_s_s", "b!tch", "b00bs", "b17ch", "b1tch", "bi+ch", "biatch", "bitch", "blow job", "blowjob", "blowjobs", "boiolas", "bollock", "bollok", "boner", "boob", "booobs", "boooobs", "booooobs", "booooooobs", "breasts", "buttplug", "c0ck", "c0cksucker", "cawk", "clit", "clitoris", "clits", "cnut", "cock", "cok", "cox", "cum", "cunt", "cyalis", "d1ck", "damn", "dick", "dickhead", "dildo", "dildos", "dink", "dinks", "dirsa", "dlck", "dog-fucker", "doggin", "dogging", "donkeyribber", "doosh", "duche", "dyke", "ejaculate", "ejaculated", "ejaculates", "ejaculating", "ejaculatings", "ejaculation", "ejakulate", "f u c k", "f u c k e r", "f4nny", "fag", "fcuk", "feck", "felching", "flange", "fook", "fooker", "fuck", "fuk", "fux", "f_u_c_k", "gaysex", "hell", "hoar", "hoer", "hore", "horniest", "horny", "hotsex", "jack-off", "jackoff", "jerk-off", "kock", "kondum", "kum", "kunilingus", "l3i+ch", "l3itch", "labia", "lusting", "m45terbate", "ma5terb8", "ma5terbate", "masochist", "master-bate", "masterb8", "masterbat*", "masterbat3", "masterbate", "masterbation", "masterbations", "masturbate", "mo-fo", "mof0", "mofo", "mothafuck", "mothafucka", "mothafuckas", "mothafuckaz", "mothafucked", "mothafucker", "mothafuckers", "mothafuckin", "mothafucking", "mothafuckings", "mothafucks", "mother fucker", "motherfuck", "motherfucked", "motherfucker", "motherfuckers", "motherfuckin", "motherfucking", "motherfuckings", "motherfuckka", "motherfucks", "muff", "muthafecker", "muthafuckker", "muther", "mutherfucker", "n1gga", "n1gger", "nigg3r", "nigg4h", "nigga", "niggah", "niggas", "niggaz", "nigger", "niggers", "numbnuts", "nutsack", "orgasim", "orgasims", "orgasm", "orgasms", "p0rn", "pawn", "pecker", "penis", "penisfucker", "phonesex", "phuck", "phuk", "phuked", "phuking", "phukked", "phukking", "phuks", "phuq", "pigfucker", "pimpis", "piss", "porn", "porno", "pube", "pusse", "pussi", "pussies", "pussy", "pussys", "rectum", "retard", "rimjaw", "rimming", "s hit", "semen", "sex", "sh!+", "sh!t", "sh1t", "shag", "shagger", "shaggin", "shi+", "shit", "skank", "slut", "sluts", "smegma", "smut", "snatch", "s_h_i_t", "t1tt1e5", "t1tties", "teets", "testical", "testicle", "tit", "vagina", "whoar", "whore"];
+            await SDM.saveServerData(data);
+            msg.channel.send("Swear list reset.");
+            break;
+        case "add":
+            if(data.swears.includes(args[1])) {
+                msg.channel.send("That word is already on the swear list.");
+                break;
+            }
+            data.swears.push(args[1]);
+            await SDM.saveServerData(data);
+            msg.channel.send("That word has been added to the swear list.");
+            break;
+        case "remove":
+            data.swears = data.swears.filter(swear => swear !== args[1]);
+            await SDM.saveServerData(data);
+            msg.channel.send(`${args[1]} has been removed from the swear list.`);
+            break;
+        case "list":
+            msg.channel.send(data.swears);
+            break;
+        case "clear":
+            data.swears = [];
+            await SDM.saveServerData(data);
+            msg.channel.send("Swear list cleared.");
+            break;
+        default:
+            msg.channel.send("You can either `add`, `remove`, `list`, `clear`, or `reset`.");
+    }
+}
+
 exports.runCommand = function runCommand(command, args, channel, client, msg) {
     if (commandsTable.hasOwnProperty(command)) {
         commandsTable[command](client, channel, args, msg);
@@ -571,7 +606,9 @@ helpInformation["startflow"] = "Starts a flow of memes in a channel!";
 helpInformation["stopflow"] = "Stops a flow of memes in a channel!";
 helpInformation["fml"] = "Gives a random fml";
 helpInformation["meme"] = "one. single. meme.";
+helpInformation["swears"] = "Configures swear lists. Enable filter with the `prof` command. Has options `add`, `remove`, `list`, `clear`, or `reset`."
 
+commandsTable = {};
 commandsTable["mute"] = mute;
 commandsTable["embed"] = makeEmbed;
 commandsTable["argprint"] = argPrint;
@@ -596,7 +633,7 @@ commandsTable["prechange"] = prechange;
 commandsTable["bal"] = bal;
 commandsTable["beg"] = addMun;
 commandsTable["bet"] = gamble;
-
+commandsTable["swears"] = swears;
 commandsTable["startflow"] = startFlow;
 commandsTable["stopflow"] = stopFlow;
 commandsTable["meme"] = meme;
