@@ -13,6 +13,7 @@ var Guild = new mongoose.Schema({
         mess: String
     },
     profanity: Boolean,
+    swears: Array,
     mute: {
         roleID: String
     },

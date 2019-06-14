@@ -20,53 +20,35 @@ function help(client, channel, args) {
 */
 let Parser = require("rss-parser");
 let parser = new Parser();
-const Discord = require("discord.js");
+const { RichEmbed } = require("discord.js");
 const SDM = require("./server-data-manager");
 const axios = require("axios");
-commandsTable = {}; // Commands hash table
-var Guild = require("./database/models/Guild");
 var moment = require("moment");
-const snekfetch = require("snekfetch");
+const fetch = require("node-fetch");
 
 const logger = require("./logger")();
 
-// Color of discord bot
-async function help(client, channel, args, msg) {
-    data = await SDM.readServerData(channel.guild.id);
-    const embed = new Discord.RichEmbed();
-    embed.setColor(2012);
-    switch (args[0]) {
-        case "general":
-            embed.setTitle("Cordless General Help");
-            embed.addField("General Commands", "`help, prechange, ping, addanoun`");
-            break;
-        case "music":
-            embed.setTitle("Cordless Music Help");
-            embed.addField("Music Commands", "`play, pause, resume, queue, skip, loop, setvol, search, clearqueue, np, leavemus`");
-            break;
-        case "mod":
-            embed.setTitle("Cordless Moderation Help");
-            embed.addField("Moderation Commands", "`mute, prof`");
-            break;
-        case "util":
-            embed.setTitle("Cordless Utility Help");
-            embed.addField("Utility Commands", "`clear, embed, welcome-message, welcome-setup, welcome-stop, leave-message, leave-setup, leave-stop`");
-            break;
-        case "mem":
-            embed.setTitle("Cordless Meme Help");
-            embed.addField("Meme Commands", "`startflow, stopflow, meme, xkcd`");
-            break;
-        default:
-            embed.setTitle("Cordless Help");
-            embed.setDescription("For a full set of commands and descriptions visit https://cordless.enenra.org/documentation \n \n Your prefix is **" + data.prefix + "**");
-            embed.addField("General", "For more info on general commands, try `" + data.prefix + "help general`");
-            embed.addField("Music", "For more info on music commands, try `" + data.prefix + "help music`");
-            embed.addField("Moderation", "For more info on moderation commands, try `" + data.prefix + "help mod`");
-            embed.addField("Utility", "For more info on utitlity commands, try `" + data.prefix + "help util`");
-            embed.addField("Memes", "For more info on meme commands, try `" + data.prefix + "help mem`");
-    }
-    channel.send({ embed });
-}
+const fs = require("fs");
+const path = require("path");
+const annotations = require("annotations");
+
+var commandList = {};
+
+var files = fs.readdirSync(path.join(__dirname, "commands"));
+var paths = [];
+files.forEach(file => {
+    paths.push(path.join(__dirname, "commands", file));
+});
+
+paths.forEach(async ppath => {
+    var { run } = require(ppath);
+    var result = annotations.getSync(ppath);
+    const opts = result.run;
+    commandList[opts.name] = { opts, run };
+});
+
+logger.info(`Registered ${paths.length} commands via the new system.`);
+
 async function clearchan(client, channel, args, msg) {
     //DEBBUGEING
     msg.delete();
@@ -79,17 +61,6 @@ async function clearchan(client, channel, args, msg) {
     msg.delete(3000);
 }
 
-function argPrint(client, channel, args) {
-    channel.send(args[0]);
-}
-//Basic ping pong command.  Returns user's ping
-function ping(client, channel, args) {
-    const embed = {
-        "color": 15747444,
-        "description": "🏓Pong! " + client.ping + " ms🏓"
-    };
-    channel.send({ embed });
-}
 async function fml(client, channel, args) {
     array = [];
     let feed = await parser.parseURL('https://www.fmylife.com/rss');
@@ -110,7 +81,7 @@ function makeEmbed(client, channel, args, msg) {
     } else if (args.length < 3) {
         channel.send("Please input a number for the color and the text separated by |");
     }
-    const embed = new Discord.RichEmbed();
+    const embed = new RichEmbed();
     try {
         embed.setColor(args[0]);
     } catch {
@@ -156,7 +127,7 @@ async function setupreaction(client, channel, args, msg) {
     data.reactions.enabled = true;
     data.reactions.count += 1;
     logger.debug(data);
-    await SDM.saveServerData(channel.guild.id, data);
+    await SDM.saveServerData(data);
     channel.send("Set reaction message role! :thumbsup:");
 }
 async function clearReact(client, channel, args, msg) {
@@ -182,7 +153,7 @@ async function clearReact(client, channel, args, msg) {
         }
         count += 1;
     }
-    await SDM.saveServerData(channel.guild.id, data);
+    await SDM.saveServerData(data);
     channel.send("Reaction has been deleted!");
 }
 //creates mute role
@@ -207,12 +178,12 @@ async function mute(client, channel, args, msg) {
             permissions: ["READ_MESSAGE_HISTORY", "CONNECT"]
         });
         msg.mentions.members.first().addRole(channel.guild.roles.find(val => val.name === "mute"));
-        await SDM.saveServerData(channel.guild.id, data);
+        await SDM.saveServerData(data);
     }
 
     if (data.mute.roleID = "") {
         data.mute.roleID = channel.guild.roles.find(val => val.name === "mute").id;
-        await SDM.saveServerData(channel.guild.id, data);
+        await SDM.saveServerData(data);
     }
     if (msg.mentions.users.first() != null) {
         user = msg.mentions.users.first();
@@ -221,7 +192,7 @@ async function mute(client, channel, args, msg) {
 
 }
 function info(client, channel, args, msg) {
-    embed = new Discord.RichEmbed()
+    embed = new RichEmbed()
         .setTitle("Info")
         .setColor(0xEFFF00)
         .setDescription("Hi! This is Cordless, a discord bot for all your needs! \n \n Find our discord server at https://discord.gg/sTCsbew and view my code at https://github.com/enenra-team-tech/discord-bot \n \n Thanks for using Cordless!!! :smile: :thumbsup:")
@@ -242,7 +213,7 @@ async function welcomeSetup(client, channel, args, msg) {
     data = await SDM.readServerData(channel.guild.id);
     data.welcomeMessages.welcomeMessageEnabled = true;
     data.welcomeMessages.welcomeChannelID = args[0];
-    await SDM.saveServerData(channel.guild.id, data);
+    await SDM.saveServerData(data);
     channel.send("Channel ID Set for welcome message");
 };
 async function prof(client, channel, args, msg) {
@@ -255,9 +226,9 @@ async function prof(client, channel, args, msg) {
     if (data.profanity == true) {
         channel.send("Profanity filter on! :thumbsup: ");
     } else {
-        channel.send("Profanity filter off?!?!?! :rage:")
+        channel.send("Profanity filter off?!?!?! :rage:");
     }
-    await SDM.saveServerData(channel.guild.id, data);
+    await SDM.saveServerData(data);
 }
 async function addAnnounce(client, channel, args, msg) {
     if (isNaN(args[0])) {
@@ -280,12 +251,12 @@ async function delAnnounce(client, channel, args, msg) {
         logger.neel("FINDING");
         var x = 0;
         try {
-        while (x < channels.count) {
-            logger.neel(channels.arr[x]);
-            logger.neel(channels.arr[x].channel == args[0] && channel.guild.id == channels.arr[x].guildID);
-            if (channels.arr[x].channel == args[0] && channel.guild.id == channels.arr[x].guildID) {
-                channels.arr.splice(x,1);
-                logger.neel("DELETED");
+            while (x < channels.count) {
+                logger.neel(channels.arr[x]);
+                logger.neel(channels.arr[x].channel == args[0] && channel.guild.id == channels.arr[x].guildID);
+                if (channels.arr[x].channel == args[0] && channel.guild.id == channels.arr[x].guildID) {
+                    channels.arr.splice(x,1);
+                    logger.neel("DELETED");
             }
             x++;
         }} catch (err) {
@@ -293,7 +264,7 @@ async function delAnnounce(client, channel, args, msg) {
         }
         logger.neel(channels);
         await SDM.achan("save", channels, channel.guild.id);
-        channel.send("Succesfully deleted the channel")
+        channel.send("Succesfully deleted the channel");
     }
 }
 async function welcomeMessage(client, channel, args, msg) {
@@ -312,7 +283,7 @@ async function welcomeMessage(client, channel, args, msg) {
         x++;
     }
     data.welcomeMessages.mess = message;
-    await SDM.saveServerData(channel.guild.id, data);
+    await SDM.saveServerData(data);
     logger.neel(message);
     channel.send("Channel thingy Set for welcome message");
 };
@@ -323,17 +294,17 @@ async function delWelcome(client, channel, args, msg) {
     }
     data = await SDM.readServerData(channel.guild.id);
     data.welcomeMessages.welcomeMessageEnabled = false;
-    await SDM.saveServerData(channel.guild.id, data);
-    channel.send("Stopped welcomes!")
+    await SDM.saveServerData(data);
+    channel.send("Stopped welcomes!");
 }
 function xkcd(client, channel, args, msg) {
     axios.get('https://xkcd.com/info.0.json')
         .then(function (response) {
-            numMem = response.data.num
+            numMem = response.data.num;
             number = rand(1, numMem);
             axios.get('https://xkcd.com/' + number + '/info.0.json')
                 .then(function (res) {
-                    const embed = new Discord.RichEmbed()
+                    const embed = new RichEmbed()
                         .setColor(0x96a8c8)
                         .setTitle("A xkcd webcomic")
                         .setDescription(res.data.title)
@@ -358,7 +329,7 @@ async function leaveSetup(client, channel, args, msg) {
     data = await SDM.readServerData(channel.guild.id);
     data.leaveMessages.leaveMessageEnabled = true;
     data.leaveMessages.leaveChannelID = args[0];
-    await SDM.saveServerData(channel.guild.id, data);
+    await SDM.saveServerData(data);
     channel.send("Channel ID Set for leave message");
 };
 async function prechange(client, channel, args, msg) {
@@ -374,9 +345,9 @@ async function prechange(client, channel, args, msg) {
 
     data = await SDM.readServerData(channel.guild.id);
     data.prefix = args[0];
-    data.prefix = data.prefix.replace("{space}"," ")
-    await SDM.saveServerData(channel.guild.id, data);
-    channel.send("@everyone The prefix for this server is now `" + args[0].replace("{space}"," ")+"`");
+    data.prefix = data.prefix.replace("{space}", " ");
+    await SDM.saveServerData(data);
+    channel.send(`@everyone The prefix for this server is now \`${data.prefix}\``);
 }
 async function leaveMessage(client, channel, args, msg) {
     if (!msg.member.hasPermission("ADMINISTRATOR") && msg.author.id != "539618266579206145") {
@@ -394,7 +365,7 @@ async function leaveMessage(client, channel, args, msg) {
         x++;
     }
     data.leaveMessages.mess = message;
-    await SDM.saveServerData(channel.guild.id, data);
+    await SDM.saveServerData(data);
     logger.neel(message);
     channel.send("Channel thingy Set for leave message");
 };
@@ -425,7 +396,7 @@ async function delLeave(client, channel, args, msg) {
     }
     data = await SDM.readServerData(channel.guild.id);
     data.leaveMessages.leaveMessageEnabled = false;
-    await SDM.saveServerData(channel.guild.id, data);
+    await SDM.saveServerData(data);
     channel.send("Stopped leaves!")
 }
 
@@ -467,17 +438,17 @@ async function gamble(client, channel, args, msg) {
     multiplier = rand(0, 2);
     if (multiplier == 0) {
         data.money+=Math.round(Number(betAmount*0.5));
-        const embed = new Discord.RichEmbed()
+        const embed = new RichEmbed()
             .setTitle("Gambling Results!")
             .setDescription(`You have won ${Math.round(Number(betAmount*0.5))} more coins! Your new balance is ${data.money}!`)
-            .setColor(0x13a532)
+            .setColor(0x13a532);
         channel.send(embed);
     } else {
-        data.money-=betAmount;
-        const embed = new Discord.RichEmbed()
+        data.money -= betAmount;
+        const embed = new RichEmbed()
             .setTitle("Gambling Results!")
             .setDescription(`You have LOST ${betAmount} coins! Your new balance is ${data.money}!`)
-            .setColor(0xec1b1b)
+            .setColor(0xec1b1b);
         channel.send(embed);
     }
     data.times.bettime = moment();
@@ -486,7 +457,7 @@ async function gamble(client, channel, args, msg) {
 }
 async function bal(client, channel, args, msg) {
     data = await SDM.readUser(msg.author.id);
-    channel.send(`Your balance is ${data.money} coins`)
+    channel.send(`Your balance is ${data.money} coins`);
 }
 
 var rip = false;
@@ -497,26 +468,27 @@ const getMeme = async (client, message) => {
         x = rand(0, 2)
         logger.debug(x);
         if (x == 0) {
-            fix = "r/dankmemes"
+            fix = "r/dankmemes";
         } else if (x == 1) {
-            fix = "r/me_irl"
+            fix = "r/me_irl";
         } else if (x == 2) {
-            fix = "r/memes"
+            fix = "r/memes";
         }
-        const { body } = await snekfetch
-            .get(memechan[x])
-            .query({ limit: 800 });
-        const allowed = message.channel.nsfw ? body.data.children : body.data.children.filter(post => !post.data.over_18);
-        if (!allowed.length) return message.channel.send('It seems we are out of fresh memes!, Try again later.');
-        const randomnumber = Math.floor(Math.random() * allowed.length)
-        const embed = new Discord.RichEmbed()
-            .setColor(0x00A2E8)
-            .setTitle(allowed[randomnumber].data.title)
-            .setDescription("Posted by: " + allowed[randomnumber].data.author)
-            .setImage(allowed[randomnumber].data.url)
-            .addField("Other info:", "Up votes: " + allowed[randomnumber].data.ups + " / Comments: " + allowed[randomnumber].data.num_comments)
-            .setFooter("Memes provided by " + fix)
-        message.channel.send(embed)
+        fetch(memechan[x] + "?limit=800")
+        .then(res => res.json())
+        .then(body => {
+            const allowed = message.channel.nsfw ? body.data.children : body.data.children.filter(post => !post.data.over_18);
+            if (!allowed.length) return message.channel.send('It seems we are out of fresh memes!, Try again later.');
+            const randomnumber = Math.floor(Math.random() * allowed.length);
+            const embed = new RichEmbed()
+                .setColor(0x00A2E8)
+                .setTitle(allowed[randomnumber].data.title)
+                .setDescription("Posted by: " + allowed[randomnumber].data.author)
+                .setImage(allowed[randomnumber].data.url)
+                .addField("Other info:", "Up votes: " + allowed[randomnumber].data.ups + " / Comments: " + allowed[randomnumber].data.num_comments)
+                .setFooter("Memes provided by " + fix);
+            message.channel.send(embed);
+        });
     } catch (err) {
         return logger.error(err);
     }
@@ -543,36 +515,67 @@ async function meme(client, channel, args, msg) {
     getMeme(client, msg);
 }
 
-exports.runCommand = function runCommand(command, args, channel, client, msg) {
-    if (commandsTable.hasOwnProperty(command)) {
-        commandsTable[command](client, channel, args, msg);
+async function swears(client, channel, args, msg) {
+    if (!msg.member.hasPermission("MANAGE_GUILD")) {
+        channel.send("You do not have the permissions to run this command!");
+        return;
+    }
+    var data = await SDM.readServerData(channel.guild.id);
+    const mode = args[0].toLowerCase();
+    switch(mode) {
+        case "reset":
+            data.swears = ["4r5e", "5h1t", "5hit", "a55", "anal", "anus", "ar5e", "arrse", "arse", "ass", "a_s_s", "b!tch", "b00bs", "b17ch", "b1tch", "bi+ch", "biatch", "bitch", "blow job", "blowjob", "blowjobs", "boiolas", "bollock", "bollok", "boner", "boob", "booobs", "boooobs", "booooobs", "booooooobs", "breasts", "buttplug", "c0ck", "c0cksucker", "cawk", "clit", "clitoris", "clits", "cnut", "cock", "cok", "cox", "cum", "cunt", "cyalis", "d1ck", "damn", "dick", "dickhead", "dildo", "dildos", "dink", "dinks", "dirsa", "dlck", "dog-fucker", "doggin", "dogging", "donkeyribber", "doosh", "duche", "dyke", "ejaculate", "ejaculated", "ejaculates", "ejaculating", "ejaculatings", "ejaculation", "ejakulate", "f u c k", "f u c k e r", "f4nny", "fag", "fcuk", "feck", "felching", "flange", "fook", "fooker", "fuck", "fuk", "fux", "f_u_c_k", "gaysex", "hell", "hoar", "hoer", "hore", "horniest", "horny", "hotsex", "jack-off", "jackoff", "jerk-off", "kock", "kondum", "kum", "kunilingus", "l3i+ch", "l3itch", "labia", "lusting", "m45terbate", "ma5terb8", "ma5terbate", "masochist", "master-bate", "masterb8", "masterbat*", "masterbat3", "masterbate", "masterbation", "masterbations", "masturbate", "mo-fo", "mof0", "mofo", "mothafuck", "mothafucka", "mothafuckas", "mothafuckaz", "mothafucked", "mothafucker", "mothafuckers", "mothafuckin", "mothafucking", "mothafuckings", "mothafucks", "mother fucker", "motherfuck", "motherfucked", "motherfucker", "motherfuckers", "motherfuckin", "motherfucking", "motherfuckings", "motherfuckka", "motherfucks", "muff", "muthafecker", "muthafuckker", "muther", "mutherfucker", "n1gga", "n1gger", "nigg3r", "nigg4h", "nigga", "niggah", "niggas", "niggaz", "nigger", "niggers", "numbnuts", "nutsack", "orgasim", "orgasims", "orgasm", "orgasms", "p0rn", "pawn", "pecker", "penis", "penisfucker", "phonesex", "phuck", "phuk", "phuked", "phuking", "phukked", "phukking", "phuks", "phuq", "pigfucker", "pimpis", "piss", "porn", "porno", "pube", "pusse", "pussi", "pussies", "pussy", "pussys", "rectum", "retard", "rimjaw", "rimming", "s hit", "semen", "sex", "sh!+", "sh!t", "sh1t", "shag", "shagger", "shaggin", "shi+", "shit", "skank", "slut", "sluts", "smegma", "smut", "snatch", "s_h_i_t", "t1tt1e5", "t1tties", "teets", "testical", "testicle", "tit", "vagina", "whoar", "whore"];
+            await SDM.saveServerData(data);
+            msg.channel.send("Swear list reset.");
+            break;
+        case "add":
+            if(data.swears.includes(args[1])) {
+                msg.channel.send("That word is already on the swear list.");
+                break;
+            }
+            data.swears.push(args[1]);
+            await SDM.saveServerData(data);
+            msg.channel.send("That word has been added to the swear list.");
+            break;
+        case "remove":
+            data.swears = data.swears.filter(swear => swear !== args[1]);
+            await SDM.saveServerData(data);
+            msg.channel.send(`${args[1]} has been removed from the swear list.`);
+            break;
+        case "list":
+            msg.channel.send(data.swears);
+            break;
+        case "clear":
+            data.swears = [];
+            await SDM.saveServerData(data);
+            msg.channel.send("Swear list cleared.");
+            break;
+        default:
+            msg.channel.send("You can either `add`, `remove`, `list`, `clear`, or `reset`.");
     }
 }
 
-helpInformation = {}; // Help information
-helpInformation["help"] = "The help function... for purposes";
-helpInformation["ping"] = "Get the discord bot's ping to your server.";
-helpInformation["embed"] = "Make discord embeds";
-helpInformation["argprint"] = "Prints arguments, mostly for debugging";
-helpInformation["mute"] = "Mutes a user(must have roles below the bots)";
-helpInformation["welcome-setup"] = "Sets user welcome channel ID";
-helpInformation["welcome-message"] = "Sets Welcome Message with $name as name and $count as member count";
-helpInformation["welcome-stop"] = "Stops the welcome messages. Turn back on with setup!"
-helpInformation["leave-setup"] = "Sets user leave channel ID";
-helpInformation["leave-message"] = "Sets leave Message with $name as name and $count as member count";
-helpInformation["leave-stop"] = "Stops the leave messages. Turn back on with setup!";
-helpInformation["clear"] = "clear a number of messages with this command!";
-helpInformation["prof"] = "toggles profanity filter!";
-helpInformation["startflow"] = "Starts a flow of memes in a channel!"
-helpInformation["stopflow"] = "Stops a flow of memes in a channel!"
-helpInformation["fml"] = "Gives a random fml"
-helpInformation["meme"] = "one. single. meme."
+exports.runCommand = function runCommand(command, args, channel, client, msg) {
+    if (commandsTable.hasOwnProperty(command)) {
+        commandsTable[command](client, channel, args, msg);
+    } else if (commandList.hasOwnProperty(command)) {
+        const commandD = commandList[command];
+        const opts = commandD.opts;
+        if(opts.permissions) {
+            if(msg.member.hasPermission(opts.permissions.split(" "))) {
+                commandList[command].run(client, channel, args, msg);
+            } else {
+                channel.send(`You do not have the required permissions to run this command: ${opts.permissions}`)
+            }
+        } else {
+            commandList[command].run(client, channel, args, msg);
+        }
+    }
+}
 
+commandsTable = {};
 commandsTable["mute"] = mute;
 commandsTable["embed"] = makeEmbed;
-commandsTable["argprint"] = argPrint;
-commandsTable["help"] = help;
-commandsTable["ping"] = ping;
 commandsTable["welcome-setup"] = welcomeSetup;
 commandsTable["welcome-message"] = welcomeMessage;
 commandsTable["welcome-stop"] = delWelcome;
@@ -592,7 +595,7 @@ commandsTable["prechange"] = prechange;
 commandsTable["bal"] = bal;
 commandsTable["beg"] = addMun;
 commandsTable["bet"] = gamble;
-
+commandsTable["swears"] = swears;
 commandsTable["startflow"] = startFlow;
 commandsTable["stopflow"] = stopFlow;
 commandsTable["meme"] = meme;
