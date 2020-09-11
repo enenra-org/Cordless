@@ -29,7 +29,7 @@
     "hoek": ">=4.2.1",
     "moment": "^2.24.0",
     "mongoose": "^5.5.13",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "node-opus": "^0.3.2",
     "rss-parser": "^3.7.0",
     "tunnel-agent": ">=0.6.0",
