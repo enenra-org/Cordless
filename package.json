@@ -28,7 +28,7 @@
     "express": "^4.17.0",
     "hoek": ">=4.2.1",
     "moment": "^2.24.0",
-    "mongoose": "^5.5.13",
+    "mongoose": "^5.7.5",
     "node-fetch": "^2.6.0",
     "node-opus": "^0.3.2",
     "rss-parser": "^3.7.0",
